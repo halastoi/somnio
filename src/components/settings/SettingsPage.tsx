@@ -90,19 +90,119 @@ export function SettingsPage() {
         </div>
       </section>
 
+      {/* How to use */}
+      <section style={{ marginBottom: '28px' }}>
+        <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          {t('settings.howToUse')}
+        </h3>
+        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {[
+            { icon: '🎵', title: t('howto.mix.title'), desc: t('howto.mix.desc') },
+            { icon: '🎚', title: t('howto.volume.title'), desc: t('howto.volume.desc') },
+            { icon: '💾', title: t('howto.save.title'), desc: t('howto.save.desc') },
+            { icon: '⏱', title: t('howto.timer.title'), desc: t('howto.timer.desc') },
+            { icon: '🫁', title: t('howto.breathe.title'), desc: t('howto.breathe.desc') },
+            { icon: 'ⓘ', title: t('howto.info.title'), desc: t('howto.info.desc') },
+            { icon: '📲', title: t('howto.install.title'), desc: t('howto.install.desc.android') + '\n' + t('howto.install.desc.ios') },
+          ].map((item) => (
+            <div key={item.icon} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+              <span style={{ fontSize: '18px', flexShrink: 0, width: '24px', textAlign: 'center' }}>{item.icon}</span>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '2px' }}>{item.title}</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.4, whiteSpace: 'pre-line' }}>{item.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* About */}
       <section>
         <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {t('settings.about')}
         </h3>
-        <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
             <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{t('settings.version')}</span>
             <span style={{ fontSize: '14px' }}>1.0.0</span>
           </div>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5, marginTop: '12px' }}>
+
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '16px' }}>
             {t('settings.donateDesc')}
           </p>
+
+          {/* Tech stack */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+              Built with
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              {['React', 'TypeScript', 'Vite', 'Zustand', 'Framer Motion', 'Web Audio API', 'Canvas API'].map((tech) => (
+                <span key={tech} style={{
+                  fontSize: '11px',
+                  color: 'var(--text-secondary)',
+                  background: 'rgba(255,255,255,0.06)',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                }}>
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Credits */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>
+              Credits & Thanks
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Mixkit.co</span>
+                <span style={{ color: 'var(--text-muted)' }}> — 101 professional royalty-free audio samples. Rain, ocean, forest, birds, fire, urban ambience, cosmic drones, lullabies, piano, guitar, harp, and flute recordings.</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Ahjay Stelino</span>
+                <span style={{ color: 'var(--text-muted)' }}> — Lullaby, Piano Reflections, Relaxing Country</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Michael Ramir C.</span>
+                <span style={{ color: 'var(--text-muted)' }}> — Baby Harp, Close Your Eyes, My Little Star, Magic Lullaby</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Diego Nava</span>
+                <span style={{ color: 'var(--text-muted)' }}> — Gentle Piano, Harp Melody</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Eugenio Mininni</span>
+                <span style={{ color: 'var(--text-muted)' }}> — Dreamy Piano, Wind & Leaves, Rest Now</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Grigoriy Nuzhny</span>
+                <span style={{ color: 'var(--text-muted)' }}> — Classical Piano pieces</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Arulo</span>
+                <span style={{ color: 'var(--text-muted)' }}> — Meditation, City Walk</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Lily J</span>
+                <span style={{ color: 'var(--text-muted)' }}> — Flute & Harp Relaxation</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Alejandro Magana</span>
+                <span style={{ color: 'var(--text-muted)' }}> — Nebula Drift</span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Andrew Ev</span>
+                <span style={{ color: 'var(--text-muted)' }}> — Soft Piano</span>
+              </div>
+            </div>
+            <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '12px', lineHeight: 1.5, fontStyle: 'italic' }}>
+              All audio licensed under the Mixkit License — free for commercial and personal use, no attribution required. We credit these artists because we appreciate their work.
+            </p>
+          </div>
         </div>
       </section>
     </div>
