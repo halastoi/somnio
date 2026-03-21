@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# Somnio - Sleep & Relaxation PWA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premium sleep and relaxation app with 210 professional sounds across 10 categories. Built as a Progressive Web App — installable, offline-capable, and works on any device.
 
-Currently, two official plugins are available:
+**Live:** [somnio-six.vercel.app](https://somnio-six.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **210 sounds** across 10 categories: Baby Sleep, Noise Colors, Rain & Storm, Water, Nature, Wind, Fire & Relax, Urban, Cosmos, Binaural Beats
+- **101 professional audio samples** (royalty-free, Mixkit licensed)
+- **Procedural audio** via Web Audio API — noise colors, binaural beats generated in real-time
+- **Sound mixer** — play multiple sounds simultaneously with per-sound volume control
+- **Save/load mixes** — custom combinations persisted in localStorage
+- **Sleep timer** — 1 to 180 minutes with configurable fade-out
+- **Breathing exercises** — 4-7-8, Box, Simple Calm, Coherent
+- **Animated background** — canvas-based, responds to active sound category
+- **4 themes** — Dark, Midnight, AMOLED, Ocean
+- **4 languages** — English, Romanian, Russian, Spanish (fully translated)
+- **Sound info** — detailed descriptions with tips, translated in all languages
+- **PWA** — installable, offline support, auto-caching audio files
+- **177 tests** passing
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19 + TypeScript
+- Vite 8
+- Zustand (state management + persistence)
+- Framer Motion (animations)
+- Web Audio API (procedural sound generation)
+- Canvas API (animated background)
+- Service Worker (offline + audio caching)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server |
+| `npm run build` | Production build |
+| `npm run preview` | Preview production build |
+| `npm test` | Run tests |
+| `npm run lint` | Lint code |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Sound Categories
+
+| Category | Sounds | Source |
+|----------|--------|--------|
+| Baby Sleep | 21 | Mixkit lullabies + procedural |
+| Noise Colors | 21 | Procedural (Web Audio API) |
+| Rain & Storm | 21 | Mixkit recordings |
+| Water | 21 | Mixkit recordings |
+| Nature | 21 | Mixkit recordings |
+| Wind | 21 | Mixkit recordings |
+| Fire & Relax | 21 | Mixkit recordings + music |
+| Urban | 21 | Mixkit recordings + music |
+| Cosmos | 21 | Mixkit recordings + procedural |
+| Binaural Beats | 21 | Procedural (Web Audio API) |
+
+## Audio License
+
+All audio samples are royalty-free under the [Mixkit License](https://mixkit.co/license/) — free for commercial and personal use, no attribution required.
+
+## Deploy
+
+Deployed on Vercel. Push to `main` and run:
+
+```bash
+vercel --prod
 ```
