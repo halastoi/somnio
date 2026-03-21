@@ -109,7 +109,15 @@ export const usePlayerStore = create<PlayerState>()(
       },
 
       setTimer: (config: Partial<TimerConfig>) => {
-        set({ timer: { ...get().timer, ...config } })
+        const newTimer = { ...get().timer, ...config }
+        set({ timer: newTimer })
+
+        // Manage the background timer interval
+        if (newTimer.enabled && newTimer.startedAt) {
+          startTimerInterval(get, set)
+        } else {
+          stopTimerInterval()
+        }
       },
 
       saveMix: (name: string) => {
@@ -247,3 +255,49 @@ function startSoundInEngine(
 }
 
 export { startSoundInEngine }
+
+// ─── Background Timer (runs outside React lifecycle) ────────────────
+
+let timerIntervalId: ReturnType<typeof setInterval> | null = null
+
+function startTimerInterval(
+  get: () => PlayerState,
+  set: (partial: Partial<PlayerState>) => void,
+) {
+  stopTimerInterval()
+
+  timerIntervalId = setInterval(() => {
+    const { timer } = get()
+    if (!timer.enabled || !timer.startedAt) {
+      stopTimerInterval()
+      return
+    }
+
+    const elapsed = (Date.now() - timer.startedAt) / 1000
+    const total = timer.duration * 60
+    const remaining = total - elapsed
+
+    if (remaining <= 0) {
+      // Time's up - stop everything
+      audioEngine.stopAll()
+      stopBackgroundKeepAlive()
+      set({
+        activeSounds: [],
+        isPlaying: false,
+        timer: { ...timer, enabled: false, startedAt: null },
+      })
+      stopTimerInterval()
+    } else if (remaining <= timer.fadeOutDuration && remaining > 0) {
+      // In fade-out zone - reduce master volume progressively
+      const fadeProgress = remaining / timer.fadeOutDuration
+      audioEngine.setMasterVolume(fadeProgress * get().masterVolume)
+    }
+  }, 1000)
+}
+
+function stopTimerInterval() {
+  if (timerIntervalId) {
+    clearInterval(timerIntervalId)
+    timerIntervalId = null
+  }
+}

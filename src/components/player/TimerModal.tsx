@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePlayerStore } from '../../stores/usePlayerStore'
-import { audioEngine } from '../../audio/AudioEngine'
 import { useSettingsStore } from '../../stores/useSettingsStore'
 
 interface TimerModalProps {
@@ -10,17 +9,9 @@ interface TimerModalProps {
 }
 
 export function TimerModal({ isOpen, onClose }: TimerModalProps) {
-  const { timer, setTimer, stopAll } = usePlayerStore()
+  const { timer, setTimer } = usePlayerStore()
   const t = useSettingsStore((s) => s.t)
   const [selectedMinutes, setSelectedMinutes] = useState(timer.duration)
-
-  const handleTimerEnd = useCallback(() => {
-    audioEngine.fadeOutAll(timer.fadeOutDuration)
-    setTimeout(() => {
-      stopAll()
-      setTimer({ enabled: false, startedAt: null })
-    }, timer.fadeOutDuration * 1000)
-  }, [timer.fadeOutDuration, stopAll, setTimer])
 
   // Sync selected minutes when modal opens
   useEffect(() => {
@@ -99,7 +90,6 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
               <TimerCountdown
                 timer={timer}
                 onCancel={cancelTimer}
-                onEnd={handleTimerEnd}
                 t={t}
               />
             ) : (
@@ -237,12 +227,10 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
 function TimerCountdown({
   timer,
   onCancel,
-  onEnd,
   t,
 }: {
   timer: { enabled: boolean; duration: number; fadeOutDuration: number; startedAt: number | null }
   onCancel: () => void
-  onEnd: () => void
   t: (key: string) => string
 }) {
   const [remaining, setRemaining] = useState<number>(0)
@@ -256,7 +244,8 @@ function TimerCountdown({
       const left = Math.max(0, total - elapsed)
 
       if (left <= 0) {
-        onEnd()
+        // Store handles stopping - just update display
+        setRemaining(0)
         return
       }
 
@@ -266,7 +255,7 @@ function TimerCountdown({
     tick()
     const interval = setInterval(tick, 1000)
     return () => clearInterval(interval)
-  }, [timer.startedAt, timer.duration, onEnd])
+  }, [timer.startedAt, timer.duration])
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600)
