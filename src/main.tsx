@@ -1,19 +1,16 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { registerSW } from 'virtual:pwa-register'
 import App from './App'
 import './styles/globals.css'
 
-// Auto-update service worker - reload page when new version available
-const updateSW = registerSW({
-  onNeedRefresh() {
-    // Silently update - next navigation will use new version
-    updateSW(true)
-  },
-  onOfflineReady() {
-    console.log('[Somnio] App ready for offline use')
-  },
-})
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(() => console.log('[Somnio] SW registered'))
+      .catch((e) => console.log('[Somnio] SW failed:', e))
+  })
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
