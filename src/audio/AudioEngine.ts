@@ -540,18 +540,73 @@ class AudioEngine {
     const buffer = await this.loadSample(url)
     if (!buffer) return
 
-    const source = this.context.createBufferSource()
-    source.buffer = buffer
-    source.loop = true
-
     const gain = this.context.createGain()
     gain.gain.value = volume
-
-    source.connect(gain)
     gain.connect(this.masterGain)
-    source.start()
 
-    this.activeNodes.set(id, { source, gain })
+    const fadeDuration = 1.5 // crossfade overlap in seconds
+    const duration = buffer.duration
+
+    // For very short samples (< 4s), use simple loop
+    if (duration < 4) {
+      const source = this.context.createBufferSource()
+      source.buffer = buffer
+      source.loop = true
+      source.connect(gain)
+      source.start()
+      this.activeNodes.set(id, { source, gain })
+      return
+    }
+
+    // Crossfade looper for longer samples
+    let currentSource: AudioBufferSourceNode | null = null
+    let currentGain: GainNode | null = null
+    let timer: ReturnType<typeof setTimeout> | null = null
+    let stopped = false
+
+    const playNext = () => {
+      if (stopped || !this.context) return
+
+      const src = this.context.createBufferSource()
+      src.buffer = buffer
+      const srcGain = this.context.createGain()
+      srcGain.gain.value = 0
+
+      src.connect(srcGain)
+      srcGain.connect(gain)
+
+      const now = this.context.currentTime
+      // Fade in
+      srcGain.gain.setTargetAtTime(1, now, fadeDuration / 3)
+
+      // Fade out previous
+      if (currentGain && currentSource) {
+        currentGain.gain.setTargetAtTime(0, now, fadeDuration / 3)
+        const oldSrc = currentSource
+        const oldGain = currentGain
+        setTimeout(() => {
+          try { oldSrc.stop(); oldSrc.disconnect(); oldGain.disconnect() } catch {}
+        }, fadeDuration * 1000 + 500)
+      }
+
+      currentSource = src
+      currentGain = srcGain
+      src.start()
+
+      // Schedule next loop before this one ends
+      const nextIn = (duration - fadeDuration) * 1000
+      timer = setTimeout(playNext, Math.max(nextIn, 1000))
+    }
+
+    playNext()
+
+    const stopFn = () => {
+      stopped = true
+      if (timer) clearTimeout(timer)
+      try { currentSource?.stop(); currentSource?.disconnect(); currentGain?.disconnect() } catch {}
+    }
+
+    this.activeNodes.set(id, { source: gain, gain, stop: stopFn })
   }
 
   // ─── Controls ────────────────────────
