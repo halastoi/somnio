@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { audioEngine } from '../audio/AudioEngine'
+import { startBackgroundKeepAlive, stopBackgroundKeepAlive } from '../audio/BackgroundKeepAlive'
 import { sounds } from '../audio/sounds'
 import type { ActiveSound, Mix, TimerConfig } from '../types'
 
@@ -54,16 +55,19 @@ export const usePlayerStore = create<PlayerState>()(
 
         if (existing) {
           audioEngine.stopSound(soundId)
+          const remaining = state.activeSounds.filter((s) => s.soundId !== soundId)
           set({
-            activeSounds: state.activeSounds.filter((s) => s.soundId !== soundId),
-            isPlaying: state.activeSounds.length > 1,
+            activeSounds: remaining,
+            isPlaying: remaining.length > 0,
           })
+          if (remaining.length === 0) stopBackgroundKeepAlive()
         } else {
           const sound = sounds.find((s) => s.id === soundId)
           if (!sound) return
 
           const volume = sound.defaultVolume * state.masterVolume
           startSoundInEngine(soundId, sound.generator, sound.sampleUrl, volume)
+          startBackgroundKeepAlive()
 
           set({
             activeSounds: [
@@ -100,6 +104,7 @@ export const usePlayerStore = create<PlayerState>()(
 
       stopAll: () => {
         audioEngine.stopAll()
+        stopBackgroundKeepAlive()
         set({ activeSounds: [], isPlaying: false })
       },
 
