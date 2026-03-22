@@ -26,7 +26,7 @@ export function RandomMixModal() {
     const allCats = categories.map(c => c.id)
     for (const cat of allCats) {
       const isAllowed = store.allowedCategories.includes(cat)
-      const shouldBeAllowed = preset.categories.includes(cat)
+      const shouldBeAllowed = (preset.categories as readonly string[]).includes(cat)
       if (isAllowed !== shouldBeAllowed) config.toggleCategory(cat)
     }
     config.setAvoidSameCategory(true)

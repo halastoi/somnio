@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePlayerStore } from '../../stores/usePlayerStore'
 import { useSettingsStore } from '../../stores/useSettingsStore'
