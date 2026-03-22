@@ -28,32 +28,28 @@ export function SettingsPage() {
         <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {t('settings.language')}
         </h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           {languages.map((lang) => (
             <button
               key={lang.id}
               onClick={() => setLanguage(lang.id)}
               style={{
+                flex: 1,
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                gap: '12px',
-                padding: '14px 16px',
+                gap: '4px',
+                padding: '10px 4px',
                 borderRadius: 'var(--radius-md)',
                 background: language === lang.id ? 'var(--bg-active)' : 'var(--bg-card)',
                 border: language === lang.id ? '2px solid var(--accent)' : '2px solid transparent',
-                textAlign: 'left',
                 transition: 'all 0.2s',
               }}
             >
-              <span style={{ fontSize: '24px' }}>{lang.flag}</span>
-              <span style={{ fontSize: '15px', fontWeight: language === lang.id ? 600 : 400 }}>
+              <span style={{ fontSize: '22px' }}>{lang.flag}</span>
+              <span style={{ fontSize: '11px', fontWeight: language === lang.id ? 600 : 400, color: language === lang.id ? 'var(--accent-light)' : 'var(--text-secondary)' }}>
                 {lang.label}
               </span>
-              {language === lang.id && (
-                <span style={{ marginLeft: 'auto', color: 'var(--accent-light)', fontSize: '18px' }}>
-                  ✓
-                </span>
-              )}
             </button>
           ))}
         </div>

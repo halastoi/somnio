@@ -5,10 +5,32 @@ import { useSettingsStore } from '../../stores/useSettingsStore'
 import { Slider } from '../ui/Slider'
 import { sounds, categories } from '../../audio/sounds'
 
+const presets = [
+  { id: 'deepSleep', icon: '💤', categories: ['binaural', 'cosmos', 'baby'], soundCount: 3, volumeMin: 0.15, volumeMax: 0.4 },
+  { id: 'natureRelax', icon: '🌿', categories: ['rain', 'water', 'nature', 'wind'], soundCount: 3, volumeMin: 0.3, volumeMax: 0.6 },
+  { id: 'focus', icon: '🎯', categories: ['noise', 'binaural'], soundCount: 2, volumeMin: 0.2, volumeMax: 0.5 },
+  { id: 'cozy', icon: '🛋', categories: ['fire', 'rain', 'urban'], soundCount: 3, volumeMin: 0.25, volumeMax: 0.55 },
+] as const
+
 export function RandomMixModal() {
   const config = useRandomMixStore()
   const { toggleSound, stopAll } = usePlayerStore()
   const t = useSettingsStore((s) => s.t)
+
+  const applyPreset = (preset: typeof presets[number]) => {
+    config.setSoundCount(preset.soundCount)
+    config.setVolumeMax(preset.volumeMax)
+    config.setVolumeMin(preset.volumeMin)
+    // Set only preset categories
+    const store = useRandomMixStore.getState()
+    const allCats = categories.map(c => c.id)
+    for (const cat of allCats) {
+      const isAllowed = store.allowedCategories.includes(cat)
+      const shouldBeAllowed = preset.categories.includes(cat)
+      if (isAllowed !== shouldBeAllowed) config.toggleCategory(cat)
+    }
+    config.setAvoidSameCategory(true)
+  }
 
   const generate = () => {
     // Stop current sounds
@@ -99,6 +121,37 @@ export function RandomMixModal() {
               🎲 {t('random.title')}
             </h2>
 
+            {/* Presets */}
+            <div style={{ marginBottom: '20px' }}>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'block', marginBottom: '10px' }}>{t('random.presets')}</span>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {presets.map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => applyPreset(preset)}
+                    style={{
+                      flex: 1,
+                      padding: '10px 6px',
+                      borderRadius: '12px',
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      color: 'var(--text-primary)',
+                      fontSize: '11px',
+                      fontWeight: 500,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '4px',
+                      minHeight: '44px',
+                    }}
+                  >
+                    <span style={{ fontSize: '20px' }}>{preset.icon}</span>
+                    <span>{t(`random.preset.${preset.id}`)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Sound count */}
             <div style={{ marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -127,7 +180,28 @@ export function RandomMixModal() {
 
             {/* Categories */}
             <div style={{ marginBottom: '16px' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'block', marginBottom: '10px' }}>{t('random.categories')}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{t('random.categories')}</span>
+                {config.allowedCategories.length < categories.length && (
+                  <button
+                    onClick={() => {
+                      for (const cat of categories) {
+                        if (!config.allowedCategories.includes(cat.id)) config.toggleCategory(cat.id)
+                      }
+                    }}
+                    style={{
+                      fontSize: '11px',
+                      color: 'var(--accent-light)',
+                      background: 'none',
+                      border: 'none',
+                      padding: '2px 6px',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {t('random.enableAll')}
+                  </button>
+                )}
+              </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {categories.map((cat) => {
                   const active = config.allowedCategories.includes(cat.id)

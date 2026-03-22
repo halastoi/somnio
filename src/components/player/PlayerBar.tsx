@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePlayerStore } from '../../stores/usePlayerStore'
 import { useSettingsStore } from '../../stores/useSettingsStore'
+import { useRandomMixStore } from '../../stores/useRandomMixStore'
 import { Slider } from '../ui/Slider'
 import { sounds } from '../../audio/sounds'
+import { quickRandomMix } from '../random/RandomMixModal'
 
 export function PlayerBar() {
   const {
@@ -20,6 +22,8 @@ export function PlayerBar() {
   const [showSaveInput, setShowSaveInput] = useState(false)
   const [mixName, setMixName] = useState('')
   const [showMixer, setShowMixer] = useState(false)
+  const longPressTimer = useRef<number>(0)
+  const longPressTriggered = useRef(false)
 
   if (activeSounds.length === 0) return null
 
@@ -92,6 +96,33 @@ export function PlayerBar() {
             >
               {activeNames}
             </div>
+          </button>
+
+          {/* Random mix button: tap = quick generate, long press = open settings */}
+          <button
+            onTouchStart={() => { longPressTimer.current = window.setTimeout(() => { longPressTriggered.current = true; useRandomMixStore.getState().setShowConfig(true) }, 500) }}
+            onTouchEnd={() => { clearTimeout(longPressTimer.current); if (!longPressTriggered.current) quickRandomMix(); longPressTriggered.current = false }}
+            onTouchCancel={() => { clearTimeout(longPressTimer.current); longPressTriggered.current = false }}
+            onMouseDown={() => { longPressTimer.current = window.setTimeout(() => { longPressTriggered.current = true; useRandomMixStore.getState().setShowConfig(true) }, 500) }}
+            onMouseUp={() => { clearTimeout(longPressTimer.current); if (!longPressTriggered.current) quickRandomMix(); longPressTriggered.current = false }}
+            onMouseLeave={() => { clearTimeout(longPressTimer.current); longPressTriggered.current = false }}
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              border: '1px solid rgba(255,255,255,0.15)',
+              fontSize: '16px',
+              WebkitTouchCallout: 'none',
+              WebkitUserSelect: 'none',
+              userSelect: 'none',
+            } as React.CSSProperties}
+          >
+            🎲
           </button>
 
           {/* Save button */}
