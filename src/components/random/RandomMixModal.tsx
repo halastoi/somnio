@@ -7,7 +7,7 @@ import { sounds, categories } from '../../audio/sounds'
 
 export function RandomMixModal() {
   const config = useRandomMixStore()
-  const { toggleSound, stopAll, activeSounds } = usePlayerStore()
+  const { toggleSound, stopAll } = usePlayerStore()
   const t = useSettingsStore((s) => s.t)
 
   const generate = () => {
