@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { sounds, categories } from '../../audio/sounds'
 import { useSettingsStore } from '../../stores/useSettingsStore'
+import { useRandomMixStore } from '../../stores/useRandomMixStore'
 import { SoundCard } from './SoundCard'
 import { SoundInfoModal } from './SoundInfoModal'
 import type { Sound } from '../../types'
@@ -104,6 +105,15 @@ export function SoundGrid() {
             count={sounds.filter((s) => s.category === cat.id).length}
           />
         ))}
+
+        {/* Random mix config */}
+        <div style={{ width: '24px', height: '1px', background: 'rgba(255,255,255,0.06)', margin: '4px 0' }} />
+        <SidebarItem
+          icon="🎲"
+          label="Mix"
+          active={false}
+          onClick={() => useRandomMixStore.getState().setShowConfig(true)}
+        />
       </div>
 
       {/* Info modal */}

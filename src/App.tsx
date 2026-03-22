@@ -5,6 +5,8 @@ import { AnimatedBackground } from './components/ui/AnimatedBackground'
 import { SoundGrid } from './components/sounds/SoundGrid'
 import { PlayerBar } from './components/player/PlayerBar'
 import { TimerModal, TimerBadge } from './components/player/TimerModal'
+import { RandomMixModal, quickRandomMix } from './components/random/RandomMixModal'
+import { useRandomMixStore } from './stores/useRandomMixStore'
 import { BreathingExercise } from './components/breathing/BreathingExercise'
 import { MixList } from './components/mixer/MixList'
 import { SettingsPage } from './components/settings/SettingsPage'
@@ -106,8 +108,35 @@ export default function App() {
             </p>
           </div>
 
-          {/* Timer countdown + button */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Random mix button */}
+          <button
+            onClick={() => {
+              if (!initialized) init()
+              quickRandomMix()
+            }}
+            onContextMenu={(e) => {
+              e.preventDefault()
+              useRandomMixStore.getState().setShowConfig(true)
+            }}
+            style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid rgba(255,255,255,0.08)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              fontSize: '18px',
+            }}
+          >
+            🎲
+          </button>
+
+          {/* Timer countdown + button */}
           <TimerBadge />
           <button
             onClick={() => setTimerOpen(true)}
@@ -163,8 +192,9 @@ export default function App() {
         {/* Player Bar */}
         <PlayerBar />
 
-        {/* Timer Modal */}
+        {/* Modals */}
         <TimerModal isOpen={timerOpen} onClose={() => setTimerOpen(false)} />
+        <RandomMixModal />
 
         {/* Bottom Navigation - glassmorphism */}
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
