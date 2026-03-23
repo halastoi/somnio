@@ -50,6 +50,17 @@ class AudioEngine {
     navigator.mediaSession.setActionHandler('pause', () => this.suspend())
   }
 
+  updateMediaSessionMetadata(title: string, artist: string): void {
+    if (!('mediaSession' in navigator)) return
+    navigator.mediaSession.metadata = new MediaMetadata({ title, artist, album: 'Somnio' })
+  }
+
+  setMediaSessionHandlers(handlers: { onNext?: () => void; onPrev?: () => void }): void {
+    if (!('mediaSession' in navigator)) return
+    navigator.mediaSession.setActionHandler('nexttrack', handlers.onNext ?? null)
+    navigator.mediaSession.setActionHandler('previoustrack', handlers.onPrev ?? null)
+  }
+
   async resume(): Promise<void> {
     if (this.context?.state === 'suspended') {
       await this.context.resume()
@@ -490,6 +501,11 @@ class AudioEngine {
       womb: () => this.procedural!.createWomb(),
       'lullaby-piano': () => this.procedural!.createLullabyPiano(),
       'music-box': () => this.procedural!.createMusicBox(),
+      'singing-bowl': () => this.procedural!.createSingingBowl(),
+      'temple-bell': () => this.procedural!.createTempleBell(),
+      'wind-chimes': () => this.procedural!.createWindChimes(),
+      'ambient-pad': () => this.procedural!.createAmbientPad(),
+      'om-drone': () => this.procedural!.createOmDrone(),
     }
 
     const factory = generators[generatorName]

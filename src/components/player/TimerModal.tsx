@@ -76,12 +76,26 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
               borderBottom: 'none',
             }}
           >
-            {/* Handle */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'rgba(255,255,255,0.15)' }} />
+            {/* Handle + Close */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px', position: 'relative' }}>
+              <div style={{ width: '48px', height: '5px', borderRadius: '3px', background: 'rgba(255,255,255,0.2)' }} />
+              <button
+                onClick={onClose}
+                style={{
+                  position: 'absolute', right: 0, top: '-4px',
+                  width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
+                  borderRadius: '50%', background: 'rgba(255,255,255,0.08)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
             </div>
 
-            <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '24px', textAlign: 'center' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '28px', textAlign: 'center' }}>
               {t('timer.title')}
             </h2>
 
@@ -96,20 +110,21 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
               /* Timer Setup View */
               <div>
                 {/* Duration display */}
-                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
                   <div style={{
                     fontSize: '56px',
                     fontWeight: 200,
                     color: 'var(--accent-light)',
                     fontVariantNumeric: 'tabular-nums',
                     lineHeight: 1,
+                    textShadow: '0 0 20px var(--accent-glow)',
                   }}>
                     {formatDuration(selectedMinutes)}
                   </div>
                 </div>
 
                 {/* Duration slider */}
-                <div style={{ padding: '0 8px', marginBottom: '20px' }}>
+                <div style={{ padding: '0 8px', marginBottom: '24px' }}>
                   <input
                     type="range"
                     min={1}
@@ -139,7 +154,7 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
                 <div style={{
                   display: 'flex',
                   gap: '8px',
-                  marginBottom: '20px',
+                  marginBottom: '24px',
                   justifyContent: 'center',
                   flexWrap: 'wrap',
                 }}>
@@ -161,6 +176,8 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
                           ? 'transparent'
                           : 'rgba(255,255,255,0.06)',
                         transition: 'all 0.2s',
+                        boxShadow: selectedMinutes === min ? '0 0 12px var(--accent-glow)' : 'none',
+                        minWidth: '52px',
                       }}
                     >
                       {formatDuration(min)}
@@ -170,16 +187,16 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
 
                 {/* Fade out setting */}
                 <div style={{
-                  padding: '14px',
+                  padding: '16px',
                   background: 'rgba(255,255,255,0.03)',
                   borderRadius: 'var(--radius-md)',
-                  marginBottom: '20px',
+                  marginBottom: '24px',
                 }}>
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: '10px',
+                    marginBottom: '12px',
                   }}>
                     <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
                       {t('timer.fadeout')}
@@ -289,7 +306,7 @@ function TimerCountdown({
             strokeLinecap="round"
             strokeDasharray={2 * Math.PI * 80}
             strokeDashoffset={2 * Math.PI * 80 * (1 - progress)}
-            style={{ transition: 'stroke-dashoffset 1s linear' }}
+            style={{ transition: 'stroke-dashoffset 1s linear', filter: 'drop-shadow(0 0 4px var(--accent-glow))' }}
           />
         </svg>
         <div style={{

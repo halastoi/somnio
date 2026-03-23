@@ -40,6 +40,8 @@ export function PlayerBar() {
     }
   }
 
+  const masterPct = Math.round(masterVolume * 100)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -61,7 +63,8 @@ export function PlayerBar() {
           flexDirection: 'column',
           gap: '8px',
           border: '1px solid rgba(255,255,255,0.08)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+          boxShadow: 'var(--shadow-lg)',
+          borderTop: '1px solid rgba(124, 92, 252, 0.2)',
         }}
       >
         {/* Status Row */}
@@ -99,7 +102,8 @@ export function PlayerBar() {
           </button>
 
           {/* Random mix button: tap = quick generate, long press = open settings */}
-          <button
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onTouchStart={() => { longPressTimer.current = window.setTimeout(() => { longPressTriggered.current = true; useRandomMixStore.getState().setShowConfig(true) }, 500) }}
             onTouchEnd={() => { clearTimeout(longPressTimer.current); if (!longPressTriggered.current) quickRandomMix(); longPressTriggered.current = false }}
             onTouchCancel={() => { clearTimeout(longPressTimer.current); longPressTriggered.current = false }}
@@ -116,17 +120,30 @@ export function PlayerBar() {
               justifyContent: 'center',
               flexShrink: 0,
               border: '1px solid rgba(255,255,255,0.15)',
-              fontSize: '16px',
               WebkitTouchCallout: 'none',
               WebkitUserSelect: 'none',
               userSelect: 'none',
+              transition: 'transform 0.15s, box-shadow 0.2s',
             } as React.CSSProperties}
           >
-            🎲
-          </button>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="8" height="8" rx="2" />
+              <rect x="14" y="2" width="8" height="8" rx="2" />
+              <rect x="2" y="14" width="8" height="8" rx="2" />
+              <rect x="14" y="14" width="8" height="8" rx="2" />
+              <circle cx="6" cy="6" r="1" fill="var(--text-primary)" />
+              <circle cx="18" cy="4" r="1" fill="var(--text-primary)" />
+              <circle cx="16" cy="6" r="1" fill="var(--text-primary)" />
+              <circle cx="4" cy="16" r="1" fill="var(--text-primary)" />
+              <circle cx="8" cy="16" r="1" fill="var(--text-primary)" />
+              <circle cx="4" cy="18" r="1" fill="var(--text-primary)" />
+              <circle cx="18" cy="18" r="1" fill="var(--text-primary)" />
+            </svg>
+          </motion.button>
 
           {/* Save button */}
-          <button
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={() => { setShowSaveInput(!showSaveInput); setShowMixer(false) }}
             style={{
               width: '36px',
@@ -138,15 +155,18 @@ export function PlayerBar() {
               justifyContent: 'center',
               flexShrink: 0,
               border: '1px solid rgba(255,255,255,0.15)',
+              boxShadow: showSaveInput ? 'var(--shadow-glow-accent)' : 'none',
+              transition: 'transform 0.15s, box-shadow 0.2s',
             }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={showSaveInput ? '#fff' : 'var(--text-primary)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
             </svg>
-          </button>
+          </motion.button>
 
           {/* Stop button */}
-          <button
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={stopAll}
             style={{
               width: '36px',
@@ -159,12 +179,13 @@ export function PlayerBar() {
               boxShadow: isPlaying ? '0 2px 12px var(--accent-glow)' : 'none',
               flexShrink: 0,
               border: '1px solid rgba(255,255,255,0.1)',
+              transition: 'transform 0.15s, box-shadow 0.2s',
             }}
           >
             <svg width="14" height="14" viewBox="0 0 20 20" fill="white">
               <rect x="3" y="3" width="14" height="14" rx="2" />
             </svg>
-          </button>
+          </motion.button>
         </div>
 
         {/* Per-sound mixer */}
@@ -182,6 +203,9 @@ export function PlayerBar() {
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 scrollbarWidth: 'thin',
+                background: 'rgba(255,255,255,0.02)',
+                borderRadius: '10px',
+                padding: '6px',
               }}
             >
               {activeSounds.map((as) => {
@@ -198,7 +222,7 @@ export function PlayerBar() {
                       padding: '4px 0',
                     }}
                   >
-                    <span style={{ fontSize: '16px', width: '24px', textAlign: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: '16px', width: '24px', textAlign: 'center', flexShrink: 0, filter: 'drop-shadow(0 0 4px var(--accent-glow))' }}>
                       {sound.icon}
                     </span>
                     <div style={{ flex: 1 }}>
@@ -310,6 +334,9 @@ export function PlayerBar() {
               height={32}
             />
           </div>
+          <span style={{ fontSize: '10px', color: 'var(--text-muted)', width: '28px', textAlign: 'right', flexShrink: 0 }}>
+            {masterPct}%
+          </span>
         </div>
       </div>
     </motion.div>

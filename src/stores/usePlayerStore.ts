@@ -12,6 +12,7 @@ interface PlayerState {
   timer: TimerConfig
   savedMixes: Mix[]
   initialized: boolean
+  favorites: string[]
 
   // Actions
   init: () => Promise<void>
@@ -24,6 +25,11 @@ interface PlayerState {
   saveMix: (name: string) => void
   loadMix: (mixId: string) => void
   deleteMix: (mixId: string) => void
+  toggleFavorite: (id: string) => void
+  playNextFavorite: () => void
+  playPrevFavorite: () => void
+  updateMediaInfo: () => void
+  loadScene: (sceneSounds: { soundId: string; volume: number }[]) => void
 }
 
 export const usePlayerStore = create<PlayerState>()(
@@ -40,11 +46,33 @@ export const usePlayerStore = create<PlayerState>()(
       },
       savedMixes: [],
       initialized: false,
+      favorites: [],
 
       init: async () => {
         if (get().initialized) return
         await audioEngine.init()
+        audioEngine.setMediaSessionHandlers({
+          onNext: () => get().playNextFavorite(),
+          onPrev: () => get().playPrevFavorite(),
+        })
         set({ initialized: true })
+
+        // Resume sounds that were playing before refresh
+        // Small delay to ensure zustand persist has rehydrated
+        setTimeout(() => {
+          const state = get()
+          if (state.activeSounds.length > 0 && !state.isPlaying) {
+            for (const as of state.activeSounds) {
+              const sound = sounds.find((s) => s.id === as.soundId)
+              if (!sound) continue
+              const vol = as.volume * state.masterVolume
+              startSoundInEngine(as.soundId, sound.generator, sound.sampleUrl, vol)
+            }
+            startBackgroundKeepAlive()
+            set({ isPlaying: true })
+            get().updateMediaInfo()
+          }
+        }, 100)
       },
 
       toggleSound: (soundId: string) => {
@@ -61,6 +89,7 @@ export const usePlayerStore = create<PlayerState>()(
             isPlaying: remaining.length > 0,
           })
           if (remaining.length === 0) stopBackgroundKeepAlive()
+          get().updateMediaInfo()
         } else {
           const sound = sounds.find((s) => s.id === soundId)
           if (!sound) return
@@ -76,6 +105,7 @@ export const usePlayerStore = create<PlayerState>()(
             ],
             isPlaying: true,
           })
+          get().updateMediaInfo()
         }
       },
 
@@ -156,6 +186,130 @@ export const usePlayerStore = create<PlayerState>()(
           savedMixes: get().savedMixes.filter((m) => m.id !== mixId),
         })
       },
+
+      toggleFavorite: (id: string) => {
+        const { favorites } = get()
+        set({
+          favorites: favorites.includes(id)
+            ? favorites.filter((f) => f !== id)
+            : [...favorites, id],
+        })
+      },
+
+      playNextFavorite: () => {
+        const state = get()
+        if (!state.initialized || state.favorites.length === 0) return
+
+        // Find current melodic sound playing (if any)
+        const currentMelodic = state.activeSounds.find((as) => {
+          const snd = sounds.find((s) => s.id === as.soundId)
+          return snd?.melodic
+        })
+
+        // Get favorite sounds list
+        const favSounds = state.favorites
+        if (favSounds.length === 0) return
+
+        // Find next favorite after current
+        let nextIdx = 0
+        if (currentMelodic) {
+          const currentIdx = favSounds.indexOf(currentMelodic.soundId)
+          nextIdx = currentIdx >= 0 ? (currentIdx + 1) % favSounds.length : 0
+          // Stop current melodic
+          audioEngine.stopSound(currentMelodic.soundId)
+          const remaining = state.activeSounds.filter((s) => s.soundId !== currentMelodic.soundId)
+          set({ activeSounds: remaining })
+        }
+
+        // Start next favorite
+        const nextId = favSounds[nextIdx]
+        const nextSound = sounds.find((s) => s.id === nextId)
+        if (!nextSound) return
+
+        const vol = nextSound.defaultVolume * state.masterVolume
+        startSoundInEngine(nextId, nextSound.generator, nextSound.sampleUrl, vol)
+        startBackgroundKeepAlive()
+
+        set({
+          activeSounds: [...get().activeSounds, { soundId: nextId, volume: nextSound.defaultVolume }],
+          isPlaying: true,
+        })
+
+        get().updateMediaInfo()
+      },
+
+      playPrevFavorite: () => {
+        const state = get()
+        if (!state.initialized || state.favorites.length === 0) return
+
+        const currentMelodic = state.activeSounds.find((as) => {
+          const snd = sounds.find((s) => s.id === as.soundId)
+          return snd?.melodic
+        })
+
+        const favSounds = state.favorites
+        if (favSounds.length === 0) return
+
+        let prevIdx = favSounds.length - 1
+        if (currentMelodic) {
+          const currentIdx = favSounds.indexOf(currentMelodic.soundId)
+          prevIdx = currentIdx > 0 ? currentIdx - 1 : favSounds.length - 1
+          audioEngine.stopSound(currentMelodic.soundId)
+          const remaining = state.activeSounds.filter((s) => s.soundId !== currentMelodic.soundId)
+          set({ activeSounds: remaining })
+        }
+
+        const prevId = favSounds[prevIdx]
+        const prevSound = sounds.find((s) => s.id === prevId)
+        if (!prevSound) return
+
+        const vol = prevSound.defaultVolume * state.masterVolume
+        startSoundInEngine(prevId, prevSound.generator, prevSound.sampleUrl, vol)
+        startBackgroundKeepAlive()
+
+        set({
+          activeSounds: [...get().activeSounds, { soundId: prevId, volume: prevSound.defaultVolume }],
+          isPlaying: true,
+        })
+
+        get().updateMediaInfo()
+      },
+
+      loadScene: (sceneSounds: { soundId: string; volume: number }[]) => {
+        const state = get()
+        if (!state.initialized) return
+
+        audioEngine.stopAll()
+
+        for (const activeSound of sceneSounds) {
+          const sound = sounds.find((s) => s.id === activeSound.soundId)
+          if (!sound) continue
+          const vol = activeSound.volume * state.masterVolume
+          startSoundInEngine(activeSound.soundId, sound.generator, sound.sampleUrl, vol)
+        }
+
+        startBackgroundKeepAlive()
+
+        set({
+          activeSounds: sceneSounds.map(({ soundId, volume }) => ({ soundId, volume })),
+          isPlaying: sceneSounds.length > 0,
+        })
+
+        get().updateMediaInfo()
+      },
+
+      updateMediaInfo: () => {
+        const state = get()
+        const names = state.activeSounds
+          .map((a) => sounds.find((s) => s.id === a.soundId)?.name)
+          .filter(Boolean)
+          .join(' + ')
+
+        audioEngine.updateMediaSessionMetadata(
+          names || 'Somnio',
+          state.activeSounds.length > 0 ? `${state.activeSounds.length} sounds` : 'Sleep Soundscape'
+        )
+      },
     }),
     {
       name: 'somnio-player',
@@ -163,6 +317,8 @@ export const usePlayerStore = create<PlayerState>()(
         savedMixes: state.savedMixes,
         masterVolume: state.masterVolume,
         timer: state.timer,
+        favorites: state.favorites,
+        activeSounds: state.activeSounds.map(({ soundId, volume }) => ({ soundId, volume })),
       }),
     }
   )
@@ -221,6 +377,7 @@ const NOISE_GENERATORS: Record<string, (id: string, vol: number) => void> = {
 // Environment sounds still using procedural generation
 const PROCEDURAL_ENV = [
   'solar-wind', 'pulsar', 'shush', 'womb',
+  'singing-bowl', 'temple-bell', 'wind-chimes', 'ambient-pad', 'om-drone',
 ]
 
 function startSoundInEngine(

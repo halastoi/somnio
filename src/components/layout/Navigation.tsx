@@ -21,7 +21,7 @@ function TabIcon({ type, active }: { type: string; active: boolean }) {
   switch (type) {
     case 'sounds':
       return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
           <path d="M9 18V5l12-2v13" />
           <circle cx="6" cy="18" r="3" />
           <circle cx="18" cy="16" r="3" />
@@ -29,7 +29,7 @@ function TabIcon({ type, active }: { type: string; active: boolean }) {
       )
     case 'mixes':
       return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
           <line x1="4" y1="21" x2="4" y2="14" />
           <line x1="4" y1="10" x2="4" y2="3" />
           <line x1="12" y1="21" x2="12" y2="12" />
@@ -43,14 +43,14 @@ function TabIcon({ type, active }: { type: string; active: boolean }) {
       )
     case 'breathe':
       return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
           <circle cx="12" cy="12" r="10" />
           <circle cx="12" cy="12" r="4" />
         </svg>
       )
     case 'settings':
       return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="3" />
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
@@ -70,17 +70,18 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
         justifyContent: 'space-around',
         padding: '8px 0',
         paddingTop: '10px',
-        background: 'rgba(0,0,0,0.3)',
+        background: 'rgba(0,0,0,0.4)',
         backdropFilter: 'blur(30px)',
         WebkitBackdropFilter: 'blur(30px)',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
+        borderTop: '1px solid rgba(255,255,255,0.08)',
       }}
     >
       {tabs.map((tab) => {
         const active = activeTab === tab.id
         return (
-          <button
+          <motion.button
             key={tab.id}
+            whileTap={{ scale: 0.92 }}
             onClick={() => onTabChange(tab.id)}
             style={{
               display: 'flex',
@@ -89,12 +90,15 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
               gap: '4px',
               padding: '4px 16px',
               position: 'relative',
+              background: active ? 'rgba(124,92,252,0.08)' : 'transparent',
+              borderRadius: '8px',
+              transition: 'background 0.2s',
             }}
           >
             <TabIcon type={tab.icon} active={active} />
             <span
               style={{
-                fontSize: '11px',
+                fontSize: '12px',
                 color: active ? 'var(--accent-light)' : 'var(--text-muted)',
                 fontWeight: active ? 600 : 400,
               }}
@@ -106,8 +110,8 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
                 layoutId="nav-indicator"
                 style={{
                   width: '20px',
-                  height: '2px',
-                  borderRadius: '1px',
+                  height: '3px',
+                  borderRadius: '1.5px',
                   background: 'var(--accent)',
                   position: 'absolute',
                   top: 0,
@@ -116,10 +120,11 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
                   right: 0,
                   marginLeft: 'auto',
                   marginRight: 'auto',
+                  boxShadow: '0 0 8px var(--accent-glow)',
                 }}
               />
             )}
-          </button>
+          </motion.button>
         )
       })}
     </nav>

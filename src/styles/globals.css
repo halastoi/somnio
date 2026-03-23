@@ -30,6 +30,15 @@
   --glass: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-hover: rgba(255, 255, 255, 0.07);
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-glow-accent: 0 0 20px var(--accent-glow), 0 4px 16px rgba(0,0,0,0.3);
+  --border-subtle: 1px solid rgba(255,255,255,0.06);
+  --border-medium: 1px solid rgba(255,255,255,0.12);
+  --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  --gradient-card-active: linear-gradient(145deg, rgba(124,92,252,0.15) 0%, rgba(124,92,252,0.05) 100%);
 }
 
 *,
@@ -73,6 +82,7 @@ button, [role="button"] {
   color: inherit;
   font: inherit;
   touch-action: manipulation;
+  transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
 }
 
 /* Premium range slider */

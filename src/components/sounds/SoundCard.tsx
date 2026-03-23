@@ -9,9 +9,10 @@ interface SoundCardProps {
 }
 
 export function SoundCard({ sound, onInfo }: SoundCardProps) {
-  const { activeSounds, toggleSound, setSoundVolume } = usePlayerStore()
+  const { activeSounds, toggleSound, setSoundVolume, favorites, toggleFavorite } = usePlayerStore()
   const activeSound = activeSounds.find((s) => s.soundId === sound.id)
   const isActive = !!activeSound
+  const isFav = favorites.includes(sound.id)
   const cardRef = useRef<HTMLDivElement>(null)
 
 
@@ -21,8 +22,8 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
       whileTap={{ scale: 0.93 }}
       style={{
         background: isActive
-          ? 'rgba(124, 92, 252, 0.18)'
-          : 'rgba(255, 255, 255, 0.04)',
+          ? 'linear-gradient(145deg, rgba(124,92,252,0.2) 0%, rgba(124,92,252,0.05) 100%)'
+          : 'linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         borderRadius: '14px',
@@ -31,11 +32,11 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
         alignItems: 'center',
         position: 'relative',
         border: isActive
-          ? '1px solid rgba(124, 92, 252, 0.4)'
-          : '1px solid rgba(255, 255, 255, 0.06)',
+          ? '1px solid rgba(124, 92, 252, 0.5)'
+          : '1px solid rgba(255, 255, 255, 0.08)',
         boxShadow: isActive
-          ? '0 4px 20px rgba(124, 92, 252, 0.2)'
-          : 'none',
+          ? '0 0 20px rgba(124,92,252,0.3), 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)'
+          : '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)',
         transition: 'all 0.25s ease',
         height: '88px',
         overflow: 'hidden',
@@ -93,7 +94,7 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
         </span>
         <span
           style={{
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: isActive ? 600 : 400,
             color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
             textAlign: 'center',
@@ -129,7 +130,7 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
         </div>
       )}
 
-      {/* Info button - top left */}
+      {/* Info button - top left (SVG info circle icon) */}
       {onInfo && (
         <button
           onClick={(e) => { e.stopPropagation(); onInfo(sound) }}
@@ -146,19 +147,54 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '10px',
-            fontWeight: 800,
-            fontStyle: 'italic',
-            color: 'rgba(255,255,255,0.6)',
             padding: 0,
             lineHeight: 1,
             border: '1px solid rgba(255,255,255,0.25)',
             zIndex: 2,
           }}
         >
-          i
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
         </button>
       )}
+
+      {/* Favorite heart button - top right (SVG heart icon) */}
+      <button
+        onClick={(e) => { e.stopPropagation(); toggleFavorite(sound.id) }}
+        style={{
+          position: 'absolute',
+          top: '4px',
+          right: '4px',
+          width: '20px',
+          height: '20px',
+          minWidth: '20px',
+          minHeight: '20px',
+          borderRadius: '50%',
+          background: 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 0,
+          lineHeight: 1,
+          border: 'none',
+          zIndex: 2,
+          opacity: isFav ? 1 : 0.4,
+          transition: 'opacity 0.2s',
+        }}
+      >
+        {isFav ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        )}
+      </button>
 
       {/* Active pulse dot */}
       {isActive && (
@@ -173,7 +209,7 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
             height: '6px',
             borderRadius: '50%',
             background: 'var(--success)',
-            boxShadow: '0 0 6px var(--success)',
+            boxShadow: '0 0 8px var(--success), 0 0 16px rgba(74, 222, 128, 0.3)',
           }}
         />
       )}
@@ -238,6 +274,7 @@ function VolumeBar({ value, onChange }: { value: number; onChange: (v: number) =
             background: 'linear-gradient(to top, var(--accent), var(--accent-light))',
             borderRadius: '4px',
             transition: 'height 0.05s',
+            boxShadow: '0 0 6px var(--accent-glow)',
           }}
         />
       </div>

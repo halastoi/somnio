@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { usePlayerStore } from './stores/usePlayerStore'
 import { useSettingsStore } from './stores/useSettingsStore'
 import { AnimatedBackground } from './components/ui/AnimatedBackground'
@@ -26,6 +26,7 @@ export default function App() {
   const initialized = usePlayerStore((s) => s.initialized)
   const timer = usePlayerStore((s) => s.timer)
   const t = useSettingsStore((s) => s.t)
+  const leavingRef = useRef(false)
 
   useEffect(() => {
     const handleGesture = () => {
@@ -46,6 +47,7 @@ export default function App() {
     window.history.pushState(null, '', window.location.href)
 
     const handlePopState = () => {
+      if (leavingRef.current) return
       if (timerOpen) {
         setTimerOpen(false)
       } else if (showExitConfirm) {
@@ -103,7 +105,7 @@ export default function App() {
             >
               somnio
             </h1>
-            <p style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '1px', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
+            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '1px', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
               {t('app.tagline')}
             </p>
           </div>
@@ -120,8 +122,8 @@ export default function App() {
               useRandomMixStore.getState().setShowConfig(true)
             }}
             style={{
-              width: '42px',
-              height: '42px',
+              width: '40px',
+              height: '40px',
               borderRadius: '50%',
               background: 'rgba(255,255,255,0.06)',
               display: 'flex',
@@ -130,10 +132,21 @@ export default function App() {
               border: '1px solid rgba(255,255,255,0.08)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              fontSize: '18px',
             }}
           >
-            🎲
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="8" height="8" rx="2" />
+              <rect x="14" y="2" width="8" height="8" rx="2" />
+              <rect x="2" y="14" width="8" height="8" rx="2" />
+              <rect x="14" y="14" width="8" height="8" rx="2" />
+              <circle cx="6" cy="6" r="1" fill="var(--text-secondary)" />
+              <circle cx="18" cy="4" r="1" fill="var(--text-secondary)" />
+              <circle cx="16" cy="6" r="1" fill="var(--text-secondary)" />
+              <circle cx="4" cy="16" r="1" fill="var(--text-secondary)" />
+              <circle cx="8" cy="16" r="1" fill="var(--text-secondary)" />
+              <circle cx="4" cy="18" r="1" fill="var(--text-secondary)" />
+              <circle cx="18" cy="18" r="1" fill="var(--text-secondary)" />
+            </svg>
           </button>
 
           {/* Timer countdown + button */}
@@ -141,8 +154,8 @@ export default function App() {
           <button
             onClick={() => setTimerOpen(true)}
             style={{
-              width: '42px',
-              height: '42px',
+              width: '40px',
+              height: '40px',
               borderRadius: '50%',
               background: timer.enabled
                 ? 'linear-gradient(135deg, var(--accent), #9d82ff)'
@@ -231,7 +244,11 @@ export default function App() {
               textAlign: 'center',
             }}
           >
-            <div style={{ fontSize: '40px', marginBottom: '16px' }}>🌙</div>
+            <div style={{ fontSize: '40px', marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-light)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </div>
             <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px' }}>
               {t('app.tagline')}
             </h3>
@@ -256,16 +273,16 @@ export default function App() {
               </button>
               <button
                 onClick={() => {
+                  leavingRef.current = true
                   setShowExitConfirm(false)
-                  window.history.back()
-                  window.history.back()
+                  window.history.go(-2)
                 }}
                 style={{
                   flex: 1,
                   padding: '14px',
                   borderRadius: '12px',
                   background: 'rgba(255,255,255,0.06)',
-                  color: 'var(--text-secondary)',
+                  color: 'var(--text-muted)',
                   fontWeight: 500,
                   fontSize: '15px',
                   border: '1px solid rgba(255,255,255,0.1)',

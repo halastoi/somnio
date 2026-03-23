@@ -879,6 +879,411 @@ export class ProceduralSounds {
     return { input, output, nodes: [delay, fb, wet, dry, lp] }
   }
 
+  // ─── New Procedural Generators ────────────────────────
+
+  /**
+   * Singing Bowl - sustained harmonic tone with slow decay and re-trigger
+   */
+  createSingingBowl(): { node: AudioNode; stop: () => void } {
+    const gain = this.ctx.createGain()
+    const allNodes: AudioNode[] = []
+    const allOscs: OscillatorNode[] = []
+    const timers: ReturnType<typeof setTimeout>[] = []
+    let stopped = false
+
+    const reverb = this.createDelay(0.3, 0.35, 0.4)
+    allNodes.push(...reverb.nodes, reverb.input, reverb.output)
+    reverb.output.connect(gain)
+
+    const triggerBowl = () => {
+      if (stopped) return
+
+      const fundamental = 220 + (Math.random() - 0.5) * 8
+      const harmonics = [1, 2, 3, 4.5, 5.2]
+      const amplitudes = [0.25, 0.15, 0.1, 0.06, 0.04]
+
+      harmonics.forEach((mult, i) => {
+        // Main oscillator
+        const osc = this.ctx.createOscillator()
+        osc.type = 'sine'
+        osc.frequency.value = fundamental * mult
+        allOscs.push(osc)
+
+        // Detuned copy for chorus
+        const osc2 = this.ctx.createOscillator()
+        osc2.type = 'sine'
+        osc2.frequency.value = fundamental * mult * 1.003
+        allOscs.push(osc2)
+
+        const oscGain = this.ctx.createGain()
+        oscGain.gain.value = 0
+        allNodes.push(oscGain)
+
+        osc.connect(oscGain)
+        osc2.connect(oscGain)
+        oscGain.connect(reverb.input)
+
+        const now = this.ctx.currentTime
+        // Envelope: attack 2s, sustain 4s, decay 6s
+        oscGain.gain.setTargetAtTime(amplitudes[i], now, 0.7)
+        oscGain.gain.setTargetAtTime(amplitudes[i] * 0.8, now + 2, 1.5)
+        oscGain.gain.setTargetAtTime(0, now + 6, 2)
+
+        osc.start(now)
+        osc2.start(now)
+        osc.stop(now + 14)
+        osc2.stop(now + 14)
+      })
+
+      // Re-trigger every 12-15 seconds
+      const nextTrigger = 12000 + Math.random() * 3000
+      const timer = setTimeout(() => triggerBowl(), nextTrigger)
+      timers.push(timer)
+    }
+
+    triggerBowl()
+
+    return {
+      node: gain,
+      stop: () => {
+        stopped = true
+        timers.forEach((t) => clearTimeout(t))
+        allOscs.forEach((o) => { try { o.stop(); o.disconnect() } catch {} })
+        allNodes.forEach((n) => { try { n.disconnect() } catch {} })
+        gain.disconnect()
+      },
+    }
+  }
+
+  /**
+   * Temple Bell - single bell strike that rings and decays, repeating randomly
+   */
+  createTempleBell(): { node: AudioNode; stop: () => void } {
+    const gain = this.ctx.createGain()
+    const allNodes: AudioNode[] = []
+    const allOscs: OscillatorNode[] = []
+    const timers: ReturnType<typeof setTimeout>[] = []
+    let stopped = false
+
+    const reverb = this.createDelay(0.2, 0.3, 0.35)
+    allNodes.push(...reverb.nodes, reverb.input, reverb.output)
+    reverb.output.connect(gain)
+
+    const triggerBell = () => {
+      if (stopped) return
+
+      const fundamental = 1200 + (Math.random() - 0.5) * 60
+      // Inharmonic partials typical of bells
+      const partials = [1, 2.76, 4.53, 6.85, 9.2]
+      const amps = [0.12, 0.08, 0.05, 0.03, 0.02]
+
+      const now = this.ctx.currentTime
+
+      partials.forEach((mult, i) => {
+        const osc = this.ctx.createOscillator()
+        osc.type = 'sine'
+        osc.frequency.value = fundamental * mult
+        allOscs.push(osc)
+
+        const oscGain = this.ctx.createGain()
+        oscGain.gain.value = amps[i]
+        allNodes.push(oscGain)
+
+        // Exponential decay over 8-12 seconds
+        const decayTime = 8 + Math.random() * 4
+        oscGain.gain.setTargetAtTime(0, now, decayTime / 5)
+
+        osc.connect(oscGain)
+        oscGain.connect(reverb.input)
+
+        osc.start(now)
+        osc.stop(now + decayTime + 2)
+      })
+
+      // Random interval between 25-40 seconds
+      const nextTrigger = 25000 + Math.random() * 15000
+      const timer = setTimeout(() => triggerBell(), nextTrigger)
+      timers.push(timer)
+    }
+
+    triggerBell()
+
+    return {
+      node: gain,
+      stop: () => {
+        stopped = true
+        timers.forEach((t) => clearTimeout(t))
+        allOscs.forEach((o) => { try { o.stop(); o.disconnect() } catch {} })
+        allNodes.forEach((n) => { try { n.disconnect() } catch {} })
+        gain.disconnect()
+      },
+    }
+  }
+
+  /**
+   * Wind Chimes - random gentle chime sounds at irregular intervals
+   */
+  createWindChimes(): { node: AudioNode; stop: () => void } {
+    const gain = this.ctx.createGain()
+    const allNodes: AudioNode[] = []
+    const allOscs: OscillatorNode[] = []
+    const timers: ReturnType<typeof setTimeout>[] = []
+    let stopped = false
+
+    const reverb = this.createDelay(0.18, 0.25, 0.3)
+    allNodes.push(...reverb.nodes, reverb.input, reverb.output)
+    reverb.output.connect(gain)
+
+    // Pentatonic scale: C5, D5, E5, G5, A5
+    const notes = [523, 587, 659, 784, 880]
+
+    const triggerChime = () => {
+      if (stopped) return
+
+      const freq = notes[Math.floor(Math.random() * notes.length)]
+      const detune = (Math.random() - 0.5) * 10 // slight detuning
+
+      const osc = this.ctx.createOscillator()
+      osc.type = 'sine'
+      osc.frequency.value = freq + detune
+      allOscs.push(osc)
+
+      // Second partial for shimmer
+      const osc2 = this.ctx.createOscillator()
+      osc2.type = 'sine'
+      osc2.frequency.value = freq * 2.01
+      allOscs.push(osc2)
+
+      const oscGain = this.ctx.createGain()
+      oscGain.gain.value = 0
+      allNodes.push(oscGain)
+
+      osc.connect(oscGain)
+      osc2.connect(oscGain)
+      oscGain.connect(reverb.input)
+
+      const now = this.ctx.currentTime
+      const decayTime = 2 + Math.random() * 2
+
+      // Short attack, medium decay
+      oscGain.gain.setTargetAtTime(0.08, now, 0.01)
+      oscGain.gain.setTargetAtTime(0, now + 0.1, decayTime / 4)
+
+      osc.start(now)
+      osc2.start(now)
+      osc.stop(now + decayTime + 1)
+      osc2.stop(now + decayTime + 1)
+
+      // Next chime in 5-15 seconds
+      const nextTrigger = 5000 + Math.random() * 10000
+      const timer = setTimeout(() => triggerChime(), nextTrigger)
+      timers.push(timer)
+    }
+
+    triggerChime()
+
+    return {
+      node: gain,
+      stop: () => {
+        stopped = true
+        timers.forEach((t) => clearTimeout(t))
+        allOscs.forEach((o) => { try { o.stop(); o.disconnect() } catch {} })
+        allNodes.forEach((n) => { try { n.disconnect() } catch {} })
+        gain.disconnect()
+      },
+    }
+  }
+
+  /**
+   * Ambient Pad - slow evolving ambient pad with chord crossfading
+   */
+  createAmbientPad(): { node: AudioNode; stop: () => void } {
+    const gain = this.ctx.createGain()
+    const allNodes: AudioNode[] = []
+    const allOscs: OscillatorNode[] = []
+    const timers: ReturnType<typeof setTimeout>[] = []
+    let stopped = false
+    let chordIndex = 0
+
+    // Chord progression: Am -> F -> C -> G
+    const chords = [
+      [220, 261.63, 329.63],   // Am: A3, C4, E4
+      [174.61, 220, 261.63],   // F: F3, A3, C4
+      [261.63, 329.63, 392],   // C: C4, E4, G4
+      [196, 246.94, 293.66],   // G: G3, B3, D4
+    ]
+
+    // Lowpass filter for warmth
+    const lp = this.ctx.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.frequency.value = 800
+    lp.Q.value = 0.5
+    allNodes.push(lp)
+    lp.connect(gain)
+
+    const playChord = () => {
+      if (stopped) return
+
+      const chord = chords[chordIndex % chords.length]
+      chordIndex++
+
+      const now = this.ctx.currentTime
+      const chordDuration = 30 + Math.random() * 15
+
+      chord.forEach((freq) => {
+        const osc = this.ctx.createOscillator()
+        osc.type = 'sine'
+        osc.frequency.value = freq
+        allOscs.push(osc)
+
+        // Slow LFO modulating frequency slightly
+        const lfo = this.ctx.createOscillator()
+        lfo.type = 'sine'
+        lfo.frequency.value = 0.05
+        allOscs.push(lfo)
+
+        const lfoGain = this.ctx.createGain()
+        lfoGain.gain.value = 1.5
+        allNodes.push(lfoGain)
+
+        lfo.connect(lfoGain)
+        lfoGain.connect(osc.frequency)
+
+        const oscGain = this.ctx.createGain()
+        oscGain.gain.value = 0
+        allNodes.push(oscGain)
+
+        osc.connect(oscGain)
+        oscGain.connect(lp)
+
+        // Crossfade: fade in over 4s, sustain, fade out over 4s
+        oscGain.gain.setTargetAtTime(0.12, now, 1.3)
+        oscGain.gain.setTargetAtTime(0, now + chordDuration - 5, 1.5)
+
+        osc.start(now)
+        lfo.start(now)
+        osc.stop(now + chordDuration + 2)
+        lfo.stop(now + chordDuration + 2)
+      })
+
+      const timer = setTimeout(() => playChord(), (chordDuration - 4) * 1000)
+      timers.push(timer)
+    }
+
+    playChord()
+
+    return {
+      node: gain,
+      stop: () => {
+        stopped = true
+        timers.forEach((t) => clearTimeout(t))
+        allOscs.forEach((o) => { try { o.stop(); o.disconnect() } catch {} })
+        allNodes.forEach((n) => { try { n.disconnect() } catch {} })
+        gain.disconnect()
+      },
+    }
+  }
+
+  /**
+   * Om Drone - deep om/drone sound with amplitude modulation and breath texture
+   */
+  createOmDrone(): { node: AudioNode; stop: () => void } {
+    const gain = this.ctx.createGain()
+    const sources: (AudioBufferSourceNode | OscillatorNode)[] = []
+    const nodes: AudioNode[] = []
+
+    const fundamental = 55 // A1
+    const harmonics = [1, 2, 3, 4, 5]
+    const amps = [0.2, 0.12, 0.07, 0.04, 0.025]
+
+    harmonics.forEach((mult, i) => {
+      const osc = this.ctx.createOscillator()
+      osc.type = 'sine'
+      osc.frequency.value = fundamental * mult
+      sources.push(osc)
+
+      const oscGain = this.ctx.createGain()
+      oscGain.gain.value = amps[i]
+      nodes.push(oscGain)
+
+      // Subtle amplitude modulation via LFO
+      const lfo = this.ctx.createOscillator()
+      lfo.type = 'sine'
+      lfo.frequency.value = 0.1 + i * 0.02
+      sources.push(lfo)
+
+      const lfoGain = this.ctx.createGain()
+      lfoGain.gain.value = amps[i] * 0.3
+      nodes.push(lfoGain)
+
+      lfo.connect(lfoGain)
+      lfoGain.connect(oscGain.gain)
+
+      osc.connect(oscGain)
+      oscGain.connect(gain)
+
+      osc.start()
+      lfo.start()
+    })
+
+    // Filtered noise layer for "breath" texture
+    const bufferSize = 2 * this.ctx.sampleRate
+    const noiseBuffer = this.ctx.createBuffer(2, bufferSize, this.ctx.sampleRate)
+    for (let ch = 0; ch < 2; ch++) {
+      let b0 = 0
+      const data = noiseBuffer.getChannelData(ch)
+      for (let i = 0; i < bufferSize; i++) {
+        const w = Math.random() * 2 - 1
+        b0 = 0.99 * b0 + w * 0.1
+        data[i] = b0
+      }
+    }
+
+    const noiseSrc = this.ctx.createBufferSource()
+    noiseSrc.buffer = noiseBuffer
+    noiseSrc.loop = true
+    sources.push(noiseSrc)
+
+    const noiseBp = this.ctx.createBiquadFilter()
+    noiseBp.type = 'bandpass'
+    noiseBp.frequency.value = 150
+    noiseBp.Q.value = 0.3
+    nodes.push(noiseBp)
+
+    const noiseGain = this.ctx.createGain()
+    noiseGain.gain.value = 0.06
+    nodes.push(noiseGain)
+
+    // Breath LFO modulating noise level
+    const breathLfo = this.ctx.createOscillator()
+    breathLfo.type = 'sine'
+    breathLfo.frequency.value = 0.08
+    sources.push(breathLfo)
+
+    const breathLfoGain = this.ctx.createGain()
+    breathLfoGain.gain.value = 0.04
+    nodes.push(breathLfoGain)
+
+    breathLfo.connect(breathLfoGain)
+    breathLfoGain.connect(noiseGain.gain)
+
+    noiseSrc.connect(noiseBp)
+    noiseBp.connect(noiseGain)
+    noiseGain.connect(gain)
+
+    noiseSrc.start()
+    breathLfo.start()
+
+    return {
+      node: gain,
+      stop: () => {
+        sources.forEach((s) => { try { s.stop(); s.disconnect() } catch {} })
+        nodes.forEach((n) => { try { n.disconnect() } catch {} })
+        gain.disconnect()
+      },
+    }
+  }
+
   /**
    * FM synthesis piano note - much more realistic than additive sine waves
    * FM synthesis creates the complex harmonic spectrum of a real piano

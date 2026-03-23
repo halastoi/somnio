@@ -26,6 +26,8 @@ export interface Sound {
   sampleUrl?: string
   /** Default volume 0-1 */
   defaultVolume: number
+  /** Whether this sound has actual melody/music (not just ambient) */
+  melodic?: boolean
 }
 
 export interface ActiveSound {

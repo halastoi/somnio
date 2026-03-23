@@ -72,6 +72,9 @@ export function BreathingExercise() {
           ? 1.0
           : 0.6
 
+  // Dynamic glow based on progress
+  const glowIntensity = isRunning ? 20 + Math.sin(progress * Math.PI) * 15 : 15
+
   if (!selectedPattern) {
     return (
       <div style={{ padding: '20px', paddingBottom: '16px' }}>
@@ -146,8 +149,8 @@ export function BreathingExercise() {
       <div
         style={{
           position: 'relative',
-          width: '240px',
-          height: '240px',
+          width: '260px',
+          height: '260px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -158,16 +161,17 @@ export function BreathingExercise() {
           animate={{ scale: circleScale }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
           style={{
-            width: '200px',
-            height: '200px',
+            width: '220px',
+            height: '220px',
             borderRadius: '50%',
             background: 'radial-gradient(circle, var(--accent-glow), transparent)',
-            border: '2px solid var(--accent)',
+            border: '3px solid var(--accent)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             flexDirection: 'column',
             gap: '4px',
+            boxShadow: `0 0 ${glowIntensity}px var(--accent-glow)`,
           }}
         >
           <AnimatePresence mode="wait">
@@ -176,7 +180,7 @@ export function BreathingExercise() {
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
-              style={{ fontSize: '20px', fontWeight: 300 }}
+              style={{ fontSize: '24px', fontWeight: 300 }}
             >
               {isRunning ? t(PHASE_KEYS[phase]) : t('breathing.ready')}
             </motion.span>

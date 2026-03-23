@@ -15,7 +15,7 @@ const themeOptions: { id: ThemeMode; key: string }[] = [
 ]
 
 export function SettingsPage() {
-  const { language, theme, setLanguage, setTheme, t } = useSettingsStore()
+  const { language, theme, binauralEnabled, setLanguage, setTheme, setBinauralEnabled, t } = useSettingsStore()
 
   return (
     <div style={{ padding: '20px 8px', paddingBottom: '16px', overflowY: 'auto', height: '100%' }}>
@@ -84,6 +84,38 @@ export function SettingsPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      {/* Binaural Beats toggle */}
+      <section style={{ marginBottom: '28px' }}>
+        <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          {t('settings.binaural')}
+        </h3>
+        <button
+          onClick={() => setBinauralEnabled(!binauralEnabled)}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            width: '100%', padding: '14px 16px', borderRadius: 'var(--radius-md)',
+            background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.06)',
+          }}
+        >
+          <div>
+            <div style={{ fontSize: '14px', fontWeight: 500, textAlign: 'left' }}>{t('settings.binaural.desc')}</div>
+          </div>
+          <div style={{
+            width: '44px', height: '24px', borderRadius: '12px',
+            background: binauralEnabled ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
+            position: 'relative', transition: 'background 0.2s', flexShrink: 0,
+          }}>
+            <div style={{
+              width: '20px', height: '20px', borderRadius: '50%', background: '#fff',
+              position: 'absolute', top: '2px',
+              left: binauralEnabled ? '22px' : '2px',
+              transition: 'left 0.2s',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+            }} />
+          </div>
+        </button>
       </section>
 
       {/* How to use */}
