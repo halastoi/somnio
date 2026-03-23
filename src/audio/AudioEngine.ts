@@ -52,7 +52,14 @@ class AudioEngine {
 
   updateMediaSessionMetadata(title: string, artist: string): void {
     if (!('mediaSession' in navigator)) return
-    navigator.mediaSession.metadata = new MediaMetadata({ title, artist, album: 'Somnio' })
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title, artist, album: 'Somnio',
+      artwork: [
+        { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+      ],
+    })
+    navigator.mediaSession.playbackState = 'playing'
   }
 
   setMediaSessionHandlers(handlers: { onNext?: () => void; onPrev?: () => void }): void {

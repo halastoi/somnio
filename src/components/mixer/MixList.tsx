@@ -115,7 +115,7 @@ export function MixList() {
 
 function ScenesView({ scenes: sceneList, loadScene, t }: {
   scenes: typeof scenes
-  loadScene: (sounds: { soundId: string; volume: number }[]) => void
+  loadScene: (sounds: { soundId: string; volume: number }[], sceneId?: string) => void
   t: (key: string) => string
 }) {
   return (
@@ -126,7 +126,7 @@ function ScenesView({ scenes: sceneList, loadScene, t }: {
           <motion.button
             key={scene.id}
             whileTap={{ scale: 0.95 }}
-            onClick={() => loadScene(scene.sounds)}
+            onClick={() => loadScene(scene.sounds, scene.id)}
             style={{
               background: style?.bg || 'var(--gradient-card)',
               borderRadius: '16px',

@@ -29,7 +29,10 @@ export function startBackgroundKeepAlive(): void {
   })
 
   isActive = true
-  updateMediaSession()
+
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = 'playing'
+  }
 }
 
 export function stopBackgroundKeepAlive(): void {
@@ -41,22 +44,6 @@ export function stopBackgroundKeepAlive(): void {
   if ('mediaSession' in navigator) {
     navigator.mediaSession.playbackState = 'none'
   }
-}
-
-function updateMediaSession(): void {
-  if (!('mediaSession' in navigator)) return
-
-  navigator.mediaSession.metadata = new MediaMetadata({
-    title: 'Somnio',
-    artist: 'Sleep & Relaxation',
-    album: 'Somnio',
-    artwork: [
-      { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-    ],
-  })
-
-  navigator.mediaSession.playbackState = 'playing'
 }
 
 export function isKeepAliveActive(): boolean {

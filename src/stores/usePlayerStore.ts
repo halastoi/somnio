@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import { audioEngine } from '../audio/AudioEngine'
 import { startBackgroundKeepAlive, stopBackgroundKeepAlive } from '../audio/BackgroundKeepAlive'
 import { sounds } from '../audio/sounds'
+import { scenes } from '../data/scenes'
 import type { ActiveSound, Mix, TimerConfig } from '../types'
 
 interface PlayerState {
@@ -13,6 +14,7 @@ interface PlayerState {
   savedMixes: Mix[]
   initialized: boolean
   favorites: string[]
+  activeSceneId: string | null
 
   // Actions
   init: () => Promise<void>
@@ -29,7 +31,7 @@ interface PlayerState {
   playNextFavorite: () => void
   playPrevFavorite: () => void
   updateMediaInfo: () => void
-  loadScene: (sceneSounds: { soundId: string; volume: number }[]) => void
+  loadScene: (sceneSounds: { soundId: string; volume: number }[], sceneId?: string) => void
 }
 
 export const usePlayerStore = create<PlayerState>()(
@@ -47,6 +49,7 @@ export const usePlayerStore = create<PlayerState>()(
       savedMixes: [],
       initialized: false,
       favorites: [],
+      activeSceneId: null,
 
       init: async () => {
         if (get().initialized) return
@@ -135,7 +138,7 @@ export const usePlayerStore = create<PlayerState>()(
       stopAll: () => {
         audioEngine.stopAll()
         stopBackgroundKeepAlive()
-        set({ activeSounds: [], isPlaying: false })
+        set({ activeSounds: [], isPlaying: false, activeSceneId: null })
       },
 
       setTimer: (config: Partial<TimerConfig>) => {
@@ -198,30 +201,34 @@ export const usePlayerStore = create<PlayerState>()(
 
       playNextFavorite: () => {
         const state = get()
-        if (!state.initialized || state.favorites.length === 0) return
+        if (!state.initialized) return
 
-        // Find current melodic sound playing (if any)
+        // If a scene is active, go to next scene
+        if (state.activeSceneId) {
+          const idx = scenes.findIndex((s) => s.id === state.activeSceneId)
+          const nextScene = scenes[(idx + 1) % scenes.length]
+          get().loadScene(nextScene.sounds, nextScene.id)
+          return
+        }
+
+        // Otherwise navigate favorites
+        if (state.favorites.length === 0) return
+
         const currentMelodic = state.activeSounds.find((as) => {
           const snd = sounds.find((s) => s.id === as.soundId)
           return snd?.melodic
         })
 
-        // Get favorite sounds list
         const favSounds = state.favorites
-        if (favSounds.length === 0) return
-
-        // Find next favorite after current
         let nextIdx = 0
         if (currentMelodic) {
           const currentIdx = favSounds.indexOf(currentMelodic.soundId)
           nextIdx = currentIdx >= 0 ? (currentIdx + 1) % favSounds.length : 0
-          // Stop current melodic
           audioEngine.stopSound(currentMelodic.soundId)
           const remaining = state.activeSounds.filter((s) => s.soundId !== currentMelodic.soundId)
           set({ activeSounds: remaining })
         }
 
-        // Start next favorite
         const nextId = favSounds[nextIdx]
         const nextSound = sounds.find((s) => s.id === nextId)
         if (!nextSound) return
@@ -240,7 +247,18 @@ export const usePlayerStore = create<PlayerState>()(
 
       playPrevFavorite: () => {
         const state = get()
-        if (!state.initialized || state.favorites.length === 0) return
+        if (!state.initialized) return
+
+        // If a scene is active, go to previous scene
+        if (state.activeSceneId) {
+          const idx = scenes.findIndex((s) => s.id === state.activeSceneId)
+          const prevScene = scenes[(idx - 1 + scenes.length) % scenes.length]
+          get().loadScene(prevScene.sounds, prevScene.id)
+          return
+        }
+
+        // Otherwise navigate favorites
+        if (state.favorites.length === 0) return
 
         const currentMelodic = state.activeSounds.find((as) => {
           const snd = sounds.find((s) => s.id === as.soundId)
@@ -248,8 +266,6 @@ export const usePlayerStore = create<PlayerState>()(
         })
 
         const favSounds = state.favorites
-        if (favSounds.length === 0) return
-
         let prevIdx = favSounds.length - 1
         if (currentMelodic) {
           const currentIdx = favSounds.indexOf(currentMelodic.soundId)
@@ -275,7 +291,7 @@ export const usePlayerStore = create<PlayerState>()(
         get().updateMediaInfo()
       },
 
-      loadScene: (sceneSounds: { soundId: string; volume: number }[]) => {
+      loadScene: (sceneSounds: { soundId: string; volume: number }[], sceneId?: string) => {
         const state = get()
         if (!state.initialized) return
 
@@ -293,6 +309,7 @@ export const usePlayerStore = create<PlayerState>()(
         set({
           activeSounds: sceneSounds.map(({ soundId, volume }) => ({ soundId, volume })),
           isPlaying: sceneSounds.length > 0,
+          activeSceneId: sceneId ?? null,
         })
 
         get().updateMediaInfo()
@@ -300,10 +317,13 @@ export const usePlayerStore = create<PlayerState>()(
 
       updateMediaInfo: () => {
         const state = get()
-        const names = state.activeSounds
-          .map((a) => sounds.find((s) => s.id === a.soundId)?.name)
-          .filter(Boolean)
-          .join(' + ')
+        const activeScene = state.activeSceneId ? scenes.find((s) => s.id === state.activeSceneId) : null
+        const names = activeScene
+          ? activeScene.icon + ' ' + activeScene.nameKey.replace('scene.', '')
+          : state.activeSounds
+              .map((a) => sounds.find((s) => s.id === a.soundId)?.name)
+              .filter(Boolean)
+              .join(' + ')
 
         audioEngine.updateMediaSessionMetadata(
           names || 'Somnio',
