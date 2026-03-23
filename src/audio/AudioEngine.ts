@@ -7,6 +7,10 @@ import { ProceduralSounds } from './ProceduralSounds'
 class AudioEngine {
   private context: AudioContext | null = null
   private masterGain: GainNode | null = null
+  private compressor: DynamicsCompressorNode | null = null
+  private eqBass: BiquadFilterNode | null = null
+  private eqMid: BiquadFilterNode | null = null
+  private eqTreble: BiquadFilterNode | null = null
   private activeNodes: Map<string, { source: AudioNode; gain: GainNode; stop?: () => void }> = new Map()
   private audioBuffers: Map<string, AudioBuffer> = new Map()
   private procedural: ProceduralSounds | null = null
@@ -27,7 +31,39 @@ class AudioEngine {
 
     this.context = new AudioContext()
     this.masterGain = this.context.createGain()
-    this.masterGain.connect(this.context.destination)
+
+    // EQ: 3-band equalizer
+    this.eqBass = this.context.createBiquadFilter()
+    this.eqBass.type = 'lowshelf'
+    this.eqBass.frequency.value = 200
+    this.eqBass.gain.value = 0
+
+    this.eqMid = this.context.createBiquadFilter()
+    this.eqMid.type = 'peaking'
+    this.eqMid.frequency.value = 1000
+    this.eqMid.Q.value = 0.5
+    this.eqMid.gain.value = 0
+
+    this.eqTreble = this.context.createBiquadFilter()
+    this.eqTreble.type = 'highshelf'
+    this.eqTreble.frequency.value = 4000
+    this.eqTreble.gain.value = 0
+
+    // Compressor for audio normalization
+    this.compressor = this.context.createDynamicsCompressor()
+    this.compressor.threshold.value = -24
+    this.compressor.knee.value = 12
+    this.compressor.ratio.value = 4
+    this.compressor.attack.value = 0.003
+    this.compressor.release.value = 0.25
+
+    // Chain: masterGain → bass → mid → treble → compressor → destination
+    this.masterGain.connect(this.eqBass)
+    this.eqBass.connect(this.eqMid)
+    this.eqMid.connect(this.eqTreble)
+    this.eqTreble.connect(this.compressor)
+    this.compressor.connect(this.context.destination)
+
     this.procedural = new ProceduralSounds(this.context)
 
     if (this.context.state === 'suspended') {
@@ -701,11 +737,21 @@ class AudioEngine {
     return this.activeNodes.size
   }
 
+  setEqualizer(bass: number, mid: number, treble: number): void {
+    if (this.eqBass) this.eqBass.gain.value = bass
+    if (this.eqMid) this.eqMid.gain.value = mid
+    if (this.eqTreble) this.eqTreble.gain.value = treble
+  }
+
   dispose(): void {
     this.stopAll()
     this.context?.close()
     this.context = null
     this.masterGain = null
+    this.compressor = null
+    this.eqBass = null
+    this.eqMid = null
+    this.eqTreble = null
   }
 }
 

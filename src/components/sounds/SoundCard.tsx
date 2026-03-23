@@ -1,6 +1,7 @@
 import { useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { usePlayerStore } from '../../stores/usePlayerStore'
+import { useSettingsStore } from '../../stores/useSettingsStore'
 import type { Sound } from '../../types'
 
 interface SoundCardProps {
@@ -9,11 +10,15 @@ interface SoundCardProps {
 }
 
 export function SoundCard({ sound, onInfo }: SoundCardProps) {
-  const { activeSounds, toggleSound, setSoundVolume, favorites, toggleFavorite } = usePlayerStore()
+  const { activeSounds, toggleSound, setSoundVolume, favorites, toggleFavorite, previewSound, previewingSoundId } = usePlayerStore()
+  const t = useSettingsStore((s) => s.t)
   const activeSound = activeSounds.find((s) => s.soundId === sound.id)
   const isActive = !!activeSound
+  const isPreviewing = previewingSoundId === sound.id
   const isFav = favorites.includes(sound.id)
   const cardRef = useRef<HTMLDivElement>(null)
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const didLongPress = useRef(false)
 
 
   return (
@@ -31,7 +36,9 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
         flexDirection: 'row',
         alignItems: 'center',
         position: 'relative',
-        border: isActive
+        border: isPreviewing
+          ? '1px solid rgba(250, 204, 21, 0.7)'
+          : isActive
           ? '1px solid rgba(124, 92, 252, 0.5)'
           : '1px solid rgba(255, 255, 255, 0.08)',
         boxShadow: isActive
@@ -45,6 +52,10 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
       {/* Left: tap area with icon + name */}
       <button
         onClick={() => {
+          if (didLongPress.current) {
+            didLongPress.current = false
+            return
+          }
           const wasActive = isActive
           toggleSound(sound.id)
           // Scroll into view only when activating (not deactivating)
@@ -68,6 +79,45 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
                 container.scrollBy({ top: scrollBy, behavior: 'smooth' })
               }
             }, 200)
+          }
+        }}
+        onTouchStart={() => {
+          didLongPress.current = false
+          longPressTimer.current = setTimeout(() => {
+            didLongPress.current = true
+            if (!isActive) previewSound(sound.id)
+          }, 500)
+        }}
+        onTouchEnd={() => {
+          if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current)
+            longPressTimer.current = null
+          }
+        }}
+        onTouchCancel={() => {
+          if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current)
+            longPressTimer.current = null
+          }
+          didLongPress.current = false
+        }}
+        onMouseDown={() => {
+          didLongPress.current = false
+          longPressTimer.current = setTimeout(() => {
+            didLongPress.current = true
+            if (!isActive) previewSound(sound.id)
+          }, 500)
+        }}
+        onMouseUp={() => {
+          if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current)
+            longPressTimer.current = null
+          }
+        }}
+        onMouseLeave={() => {
+          if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current)
+            longPressTimer.current = null
           }
         }}
         style={{
@@ -195,6 +245,30 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
           </svg>
         )}
       </button>
+
+      {/* Preview indicator */}
+      {isPreviewing && (
+        <motion.div
+          animate={{ opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 1, repeat: Infinity }}
+          style={{
+            position: 'absolute',
+            bottom: '4px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: '9px',
+            fontWeight: 600,
+            color: 'rgba(250, 204, 21, 0.9)',
+            background: 'rgba(250, 204, 21, 0.15)',
+            padding: '1px 6px',
+            borderRadius: '4px',
+            zIndex: 3,
+            pointerEvents: 'none',
+          }}
+        >
+          {t('sounds.preview')}
+        </motion.div>
+      )}
 
       {/* Active pulse dot */}
       {isActive && (

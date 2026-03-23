@@ -1,4 +1,5 @@
 import { useSettingsStore, type Language, type ThemeMode } from '../../stores/useSettingsStore'
+import { useSleepStore } from '../../stores/useSleepStore'
 
 const languages: { id: Language; label: string; flag: string }[] = [
   { id: 'en', label: 'English', flag: '🇬🇧' },
@@ -15,7 +16,10 @@ const themeOptions: { id: ThemeMode; key: string }[] = [
 ]
 
 export function SettingsPage() {
-  const { language, theme, binauralEnabled, setLanguage, setTheme, setBinauralEnabled, t } = useSettingsStore()
+  const { language, theme, binauralEnabled, setLanguage, setTheme, setBinauralEnabled, t, eqBass, eqMid, eqTreble, setEq } = useSettingsStore()
+  const { history, streak } = useSleepStore()
+  const sleepToday = useSleepStore((s) => s.getToday())
+  const sleepWeek = useSleepStore((s) => s.getWeekTotal())
 
   return (
     <div style={{ padding: '20px 8px', paddingBottom: '16px', overflowY: 'auto', height: '100%' }}>
@@ -86,6 +90,57 @@ export function SettingsPage() {
         </div>
       </section>
 
+      {/* Equalizer */}
+      <section style={{ marginBottom: '28px' }}>
+        <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          {t('settings.equalizer')}
+        </h3>
+        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          {([
+            { label: 'eq.bass', value: eqBass, key: 'bass' as const },
+            { label: 'eq.mid', value: eqMid, key: 'mid' as const },
+            { label: 'eq.treble', value: eqTreble, key: 'treble' as const },
+          ]).map((band) => (
+            <div key={band.key}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{t(band.label)}</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                  {band.value > 0 ? '+' : ''}{band.value} dB
+                </span>
+              </div>
+              <input
+                type="range"
+                min={-12}
+                max={12}
+                step={1}
+                value={band.value}
+                onChange={(e) => {
+                  const v = Number(e.target.value)
+                  if (band.key === 'bass') setEq(v, eqMid, eqTreble)
+                  else if (band.key === 'mid') setEq(eqBass, v, eqTreble)
+                  else setEq(eqBass, eqMid, v)
+                }}
+                style={{ width: '100%', accentColor: 'var(--accent)', cursor: 'pointer' }}
+              />
+            </div>
+          ))}
+          <button
+            onClick={() => setEq(0, 0, 0)}
+            style={{
+              alignSelf: 'flex-end',
+              fontSize: '12px',
+              color: 'var(--accent-light)',
+              background: 'rgba(255,255,255,0.06)',
+              padding: '4px 12px',
+              borderRadius: '6px',
+              border: '1px solid rgba(255,255,255,0.1)',
+            }}
+          >
+            {t('eq.reset')}
+          </button>
+        </div>
+      </section>
+
       {/* Binaural Beats toggle */}
       <section style={{ marginBottom: '28px' }}>
         <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -116,6 +171,51 @@ export function SettingsPage() {
             }} />
           </div>
         </button>
+      </section>
+
+      {/* Sleep Stats */}
+      <section style={{ marginBottom: '28px' }}>
+        <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          {t('settings.sleepStats')}
+        </h3>
+        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+          {history.length === 0 ? (
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', textAlign: 'center' }}>
+              {t('sleep.noData')}
+            </p>
+          ) : (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '16px', textAlign: 'center' }}>
+                <div>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--accent-light)' }}>
+                    {sleepToday?.minutes ?? 0}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    {t('sleep.today')} ({t('sleep.minutes')})
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--accent-light)' }}>
+                    {sleepWeek}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    {t('sleep.week')} ({t('sleep.minutes')})
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--accent-light)' }}>
+                    {streak} 🔥
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    {t('sleep.streak')}
+                  </div>
+                </div>
+              </div>
+              {/* Simple 7-day bar chart */}
+              <SleepChart history={history} />
+            </>
+          )}
+        </div>
       </section>
 
       {/* How to use */}
@@ -272,6 +372,41 @@ function ThemePreview({ themeId }: { themeId: ThemeMode }) {
           background: colors.accent,
         }}
       />
+    </div>
+  )
+}
+
+function SleepChart({ history }: { history: { date: string; minutes: number }[] }) {
+  // Get the last 7 days
+  const days: { date: string; minutes: number; label: string }[] = []
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date()
+    d.setDate(d.getDate() - i)
+    const dateStr = d.toISOString().slice(0, 10)
+    const entry = history.find((h) => h.date === dateStr)
+    const dayLabel = d.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)
+    days.push({ date: dateStr, minutes: entry?.minutes ?? 0, label: dayLabel })
+  }
+
+  const maxMin = Math.max(...days.map((d) => d.minutes), 1)
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '60px', justifyContent: 'space-between' }}>
+      {days.map((day) => (
+        <div key={day.date} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, gap: '2px', height: '100%', justifyContent: 'flex-end' }}>
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '24px',
+              height: `${Math.max((day.minutes / maxMin) * 48, 2)}px`,
+              background: day.minutes > 0 ? 'var(--accent)' : 'rgba(255,255,255,0.08)',
+              borderRadius: '3px',
+              transition: 'height 0.3s',
+            }}
+          />
+          <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>{day.label}</span>
+        </div>
+      ))}
     </div>
   )
 }

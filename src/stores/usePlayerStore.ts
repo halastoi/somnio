@@ -4,6 +4,8 @@ import { audioEngine } from '../audio/AudioEngine'
 import { startBackgroundKeepAlive, stopBackgroundKeepAlive } from '../audio/BackgroundKeepAlive'
 import { sounds } from '../audio/sounds'
 import { scenes } from '../data/scenes'
+import { useSleepStore } from './useSleepStore'
+import { useSettingsStore } from './useSettingsStore'
 import type { ActiveSound, Mix, TimerConfig } from '../types'
 
 interface PlayerState {
@@ -15,6 +17,7 @@ interface PlayerState {
   initialized: boolean
   favorites: string[]
   activeSceneId: string | null
+  previewingSoundId: string | null
 
   // Actions
   init: () => Promise<void>
@@ -32,6 +35,8 @@ interface PlayerState {
   playPrevFavorite: () => void
   updateMediaInfo: () => void
   loadScene: (sceneSounds: { soundId: string; volume: number }[], sceneId?: string) => void
+  previewSound: (soundId: string) => void
+  stopPreview: () => void
 }
 
 export const usePlayerStore = create<PlayerState>()(
@@ -50,6 +55,7 @@ export const usePlayerStore = create<PlayerState>()(
       initialized: false,
       favorites: [],
       activeSceneId: null,
+      previewingSoundId: null,
 
       init: async () => {
         if (get().initialized) return
@@ -58,6 +64,11 @@ export const usePlayerStore = create<PlayerState>()(
           onNext: () => get().playNextFavorite(),
           onPrev: () => get().playPrevFavorite(),
         })
+
+        // Apply saved EQ settings
+        const settings = useSettingsStore.getState()
+        audioEngine.setEqualizer(settings.eqBass, settings.eqMid, settings.eqTreble)
+
         set({ initialized: true })
 
         // Resume sounds that were playing before refresh
@@ -91,12 +102,16 @@ export const usePlayerStore = create<PlayerState>()(
             activeSounds: remaining,
             isPlaying: remaining.length > 0,
           })
-          if (remaining.length === 0) stopBackgroundKeepAlive()
+          if (remaining.length === 0) {
+            stopBackgroundKeepAlive()
+            useSleepStore.getState().endSession()
+          }
           get().updateMediaInfo()
         } else {
           const sound = sounds.find((s) => s.id === soundId)
           if (!sound) return
 
+          const wasEmpty = state.activeSounds.length === 0
           const volume = sound.defaultVolume * state.masterVolume
           startSoundInEngine(soundId, sound.generator, sound.sampleUrl, volume)
           startBackgroundKeepAlive()
@@ -108,6 +123,7 @@ export const usePlayerStore = create<PlayerState>()(
             ],
             isPlaying: true,
           })
+          if (wasEmpty) useSleepStore.getState().startSession()
           get().updateMediaInfo()
         }
       },
@@ -138,6 +154,7 @@ export const usePlayerStore = create<PlayerState>()(
       stopAll: () => {
         audioEngine.stopAll()
         stopBackgroundKeepAlive()
+        useSleepStore.getState().endSession()
         set({ activeSounds: [], isPlaying: false, activeSceneId: null })
       },
 
@@ -330,6 +347,42 @@ export const usePlayerStore = create<PlayerState>()(
           state.activeSounds.length > 0 ? `${state.activeSounds.length} sounds` : 'Sleep Soundscape'
         )
       },
+
+      previewSound: (soundId: string) => {
+        const state = get()
+        if (!state.initialized) return
+
+        // Stop any existing preview
+        get().stopPreview()
+
+        const sound = sounds.find((s) => s.id === soundId)
+        if (!sound) return
+
+        const previewId = `__preview_${soundId}`
+        const vol = (sound.defaultVolume ?? 0.5) * state.masterVolume
+        startSoundInEngine(previewId, sound.generator, sound.sampleUrl, vol)
+
+        set({ previewingSoundId: soundId })
+
+        // Auto-stop after 5 seconds
+        previewTimer = setTimeout(() => {
+          audioEngine.stopSound(previewId)
+          set({ previewingSoundId: null })
+          previewTimer = null
+        }, 5000)
+      },
+
+      stopPreview: () => {
+        const { previewingSoundId } = get()
+        if (previewingSoundId) {
+          audioEngine.stopSound(`__preview_${previewingSoundId}`)
+          set({ previewingSoundId: null })
+        }
+        if (previewTimer) {
+          clearTimeout(previewTimer)
+          previewTimer = null
+        }
+      },
     }),
     {
       name: 'somnio-player',
@@ -343,6 +396,8 @@ export const usePlayerStore = create<PlayerState>()(
     }
   )
 )
+
+let previewTimer: ReturnType<typeof setTimeout> | null = null
 
 // Procedural generators handled directly by the AudioEngine
 const NOISE_GENERATORS: Record<string, (id: string, vol: number) => void> = {

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePlayerStore } from '../../stores/usePlayerStore'
 import { useSettingsStore } from '../../stores/useSettingsStore'
@@ -24,6 +24,11 @@ export function PlayerBar() {
   const [showMixer, setShowMixer] = useState(false)
   const longPressTimer = useRef<number>(0)
   const longPressTriggered = useRef(false)
+
+  // Close save input when sounds change
+  useEffect(() => {
+    setShowSaveInput(false)
+  }, [activeSounds.length])
 
   if (activeSounds.length === 0) return null
 

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { audioEngine } from '../audio/AudioEngine'
 
 export type Language = 'en' | 'ro' | 'ru' | 'es'
 export type ThemeMode = 'dark' | 'midnight' | 'amoled' | 'ocean'
@@ -203,6 +204,18 @@ export const translations: Record<Language, Record<string, string>> = {
     'scene.candlelight.desc': 'Warm fireplace with soft chimes',
     'scene.babySleep': 'Baby Sleep',
     'scene.babySleep.desc': 'Womb sounds with heartbeat',
+    'sounds.preview': 'Preview',
+    'settings.sleepStats': 'Sleep Stats',
+    'sleep.today': 'Today',
+    'sleep.week': 'This week',
+    'sleep.streak': 'Streak',
+    'sleep.minutes': 'min',
+    'sleep.noData': 'Start playing sounds to track your sleep',
+    'settings.equalizer': 'Equalizer',
+    'eq.bass': 'Bass',
+    'eq.mid': 'Mid',
+    'eq.treble': 'Treble',
+    'eq.reset': 'Reset',
   },
   ro: {
     'app.tagline': 'pluteste in vise',
@@ -348,6 +361,18 @@ export const translations: Record<Language, Record<string, string>> = {
     'scene.candlelight.desc': 'Semineu cald cu clopotei subtili',
     'scene.babySleep': 'Somn Bebe',
     'scene.babySleep.desc': 'Sunete de uter cu batai de inima',
+    'sounds.preview': 'Previzualizare',
+    'settings.sleepStats': 'Statistici Somn',
+    'sleep.today': 'Azi',
+    'sleep.week': 'Saptamana',
+    'sleep.streak': 'Serie',
+    'sleep.minutes': 'min',
+    'sleep.noData': 'Porneste sunetele pentru a urmari somnul',
+    'settings.equalizer': 'Egalizator',
+    'eq.bass': 'Bas',
+    'eq.mid': 'Medii',
+    'eq.treble': 'Inalte',
+    'eq.reset': 'Reseteaza',
   },
   ru: {
     'app.tagline': 'погрузись в сны',
@@ -493,6 +518,18 @@ export const translations: Record<Language, Record<string, string>> = {
     'scene.candlelight.desc': 'Тёплый камин с нежными колокольчиками',
     'scene.babySleep': 'Сон Малыша',
     'scene.babySleep.desc': 'Звуки утробы с сердцебиением',
+    'sounds.preview': 'Превью',
+    'settings.sleepStats': 'Статистика сна',
+    'sleep.today': 'Сегодня',
+    'sleep.week': 'Неделя',
+    'sleep.streak': 'Серия',
+    'sleep.minutes': 'мин',
+    'sleep.noData': 'Включите звуки для отслеживания',
+    'settings.equalizer': 'Эквалайзер',
+    'eq.bass': 'Басы',
+    'eq.mid': 'Средние',
+    'eq.treble': 'Высокие',
+    'eq.reset': 'Сбросить',
   },
   es: {
     'app.tagline': 'sumérgete en sueños',
@@ -638,6 +675,18 @@ export const translations: Record<Language, Record<string, string>> = {
     'scene.candlelight.desc': 'Chimenea calida con campanillas suaves',
     'scene.babySleep': 'Sueno de Bebe',
     'scene.babySleep.desc': 'Sonidos de utero con latidos del corazon',
+    'sounds.preview': 'Vista previa',
+    'settings.sleepStats': 'Estadisticas de Sueno',
+    'sleep.today': 'Hoy',
+    'sleep.week': 'Semana',
+    'sleep.streak': 'Racha',
+    'sleep.minutes': 'min',
+    'sleep.noData': 'Reproduce sonidos para rastrear',
+    'settings.equalizer': 'Ecualizador',
+    'eq.bass': 'Graves',
+    'eq.mid': 'Medios',
+    'eq.treble': 'Agudos',
+    'eq.reset': 'Resetear',
   },
 }
 
@@ -645,9 +694,13 @@ interface SettingsState {
   language: Language
   theme: ThemeMode
   binauralEnabled: boolean
+  eqBass: number
+  eqMid: number
+  eqTreble: number
   setLanguage: (lang: Language) => void
   setTheme: (theme: ThemeMode) => void
   setBinauralEnabled: (v: boolean) => void
+  setEq: (bass: number, mid: number, treble: number) => void
   t: (key: string) => string
 }
 
@@ -657,12 +710,19 @@ export const useSettingsStore = create<SettingsState>()(
       language: 'en',
       theme: 'dark',
       binauralEnabled: false,
+      eqBass: 0,
+      eqMid: 0,
+      eqTreble: 0,
       setLanguage: (language: Language) => set({ language }),
       setTheme: (theme: ThemeMode) => {
         set({ theme })
         applyTheme(theme)
       },
       setBinauralEnabled: (binauralEnabled: boolean) => set({ binauralEnabled }),
+      setEq: (bass: number, mid: number, treble: number) => {
+        set({ eqBass: bass, eqMid: mid, eqTreble: treble })
+        audioEngine.setEqualizer(bass, mid, treble)
+      },
       t: (key: string) => {
         const lang = get().language
         return translations[lang][key] ?? translations.en[key] ?? key
