@@ -5,8 +5,7 @@ import { AnimatedBackground } from './components/ui/AnimatedBackground'
 import { SoundGrid } from './components/sounds/SoundGrid'
 import { PlayerBar } from './components/player/PlayerBar'
 import { TimerModal, TimerBadge } from './components/player/TimerModal'
-import { RandomMixModal, quickRandomMix } from './components/random/RandomMixModal'
-import { useRandomMixStore } from './stores/useRandomMixStore'
+import { RandomMixModal } from './components/random/RandomMixModal'
 import { scenes } from './data/scenes'
 import { BreathingExercise } from './components/breathing/BreathingExercise'
 import { MixList } from './components/mixer/MixList'
@@ -115,79 +114,49 @@ export default function App() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {/* Random mix button */}
-          <button
-            onClick={() => {
-              if (!initialized) init()
-              quickRandomMix()
-            }}
-            onContextMenu={(e) => {
-              e.preventDefault()
-              useRandomMixStore.getState().setShowConfig(true)
-            }}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'rgba(255,255,255,0.06)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid rgba(255,255,255,0.08)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="2" width="8" height="8" rx="2" />
-              <rect x="14" y="2" width="8" height="8" rx="2" />
-              <rect x="2" y="14" width="8" height="8" rx="2" />
-              <rect x="14" y="14" width="8" height="8" rx="2" />
-              <circle cx="6" cy="6" r="1" fill="var(--text-secondary)" />
-              <circle cx="18" cy="4" r="1" fill="var(--text-secondary)" />
-              <circle cx="16" cy="6" r="1" fill="var(--text-secondary)" />
-              <circle cx="4" cy="16" r="1" fill="var(--text-secondary)" />
-              <circle cx="8" cy="16" r="1" fill="var(--text-secondary)" />
-              <circle cx="4" cy="18" r="1" fill="var(--text-secondary)" />
-              <circle cx="18" cy="18" r="1" fill="var(--text-secondary)" />
-            </svg>
-          </button>
-
-          {/* Timer countdown + button */}
-          <TimerBadge />
-          <button
-            onClick={() => setTimerOpen(true)}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: timer.enabled
-                ? 'linear-gradient(135deg, var(--accent), #9d82ff)'
-                : 'rgba(255,255,255,0.06)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: timer.enabled ? 'none' : '1px solid rgba(255,255,255,0.08)',
-              boxShadow: timer.enabled ? '0 4px 20px var(--accent-glow)' : 'none',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              transition: 'all 0.3s',
-            }}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke={timer.enabled ? '#fff' : 'var(--text-secondary)'}
-              strokeWidth="2"
-              strokeLinecap="round"
+          {/* Timer countdown + button - only visible when sounds are playing */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            opacity: isPlaying ? 1 : 0,
+            transform: isPlaying ? 'scale(1)' : 'scale(0.8)',
+            transition: 'opacity 0.5s ease, transform 0.5s ease',
+            pointerEvents: isPlaying ? 'auto' : 'none',
+          }}>
+            <TimerBadge />
+            <button
+              onClick={() => setTimerOpen(true)}
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: timer.enabled
+                  ? 'linear-gradient(135deg, var(--accent), #9d82ff)'
+                  : 'rgba(255,255,255,0.06)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: timer.enabled ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                boxShadow: timer.enabled ? '0 4px 20px var(--accent-glow)' : 'none',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                transition: 'all 0.3s',
+              }}
             >
-              <circle cx="12" cy="13" r="8" />
-              <path d="M12 9v4l2 2" />
-              <line x1="12" y1="1" x2="12" y2="3" />
-            </svg>
-          </button>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={timer.enabled ? '#fff' : 'var(--text-secondary)'}
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <circle cx="12" cy="13" r="8" />
+                <path d="M12 9v4l2 2" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+              </svg>
+            </button>
+          </div>
           </div>
         </header>
 
@@ -210,7 +179,7 @@ export default function App() {
         {!isPlaying && activeSounds.length === 0 && activeTab === 'sounds' && (
           <div style={{
             display: 'flex', justifyContent: 'center',
-            padding: '0 0 12px', flexShrink: 0,
+            padding: '6px 0', flexShrink: 0,
           }}>
             <button
               onClick={async () => {
@@ -219,7 +188,7 @@ export default function App() {
                 loadScene(scene.sounds, scene.id)
               }}
               style={{
-                padding: '14px 28px',
+                padding: '10px 24px',
                 borderRadius: '50px',
                 background: 'linear-gradient(135deg, var(--accent), var(--accent-light))',
                 color: '#fff',

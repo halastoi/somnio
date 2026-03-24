@@ -132,17 +132,7 @@ export function PlayerBar() {
             } as React.CSSProperties}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="2" width="8" height="8" rx="2" />
-              <rect x="14" y="2" width="8" height="8" rx="2" />
-              <rect x="2" y="14" width="8" height="8" rx="2" />
-              <rect x="14" y="14" width="8" height="8" rx="2" />
-              <circle cx="6" cy="6" r="1" fill="var(--text-primary)" />
-              <circle cx="18" cy="4" r="1" fill="var(--text-primary)" />
-              <circle cx="16" cy="6" r="1" fill="var(--text-primary)" />
-              <circle cx="4" cy="16" r="1" fill="var(--text-primary)" />
-              <circle cx="8" cy="16" r="1" fill="var(--text-primary)" />
-              <circle cx="4" cy="18" r="1" fill="var(--text-primary)" />
-              <circle cx="18" cy="18" r="1" fill="var(--text-primary)" />
+              <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H20" /><path d="M18 2l4 4-4 4" /><path d="M2 6h1.4c1.3 0 2.5.6 3.3 1.7l6.1 8.6c.7 1.1 2 1.7 3.3 1.7H20" /><path d="M18 14l4 4-4 4" />
             </svg>
           </motion.button>
 

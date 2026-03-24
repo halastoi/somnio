@@ -152,17 +152,7 @@ export function RandomMixModal() {
 
             <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '20px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-light)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="8" height="8" rx="2" />
-                <rect x="14" y="2" width="8" height="8" rx="2" />
-                <rect x="2" y="14" width="8" height="8" rx="2" />
-                <rect x="14" y="14" width="8" height="8" rx="2" />
-                <circle cx="6" cy="6" r="1" fill="var(--accent-light)" />
-                <circle cx="18" cy="4" r="1" fill="var(--accent-light)" />
-                <circle cx="16" cy="6" r="1" fill="var(--accent-light)" />
-                <circle cx="4" cy="16" r="1" fill="var(--accent-light)" />
-                <circle cx="8" cy="16" r="1" fill="var(--accent-light)" />
-                <circle cx="4" cy="18" r="1" fill="var(--accent-light)" />
-                <circle cx="18" cy="18" r="1" fill="var(--accent-light)" />
+                <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H20" /><path d="M18 2l4 4-4 4" /><path d="M2 6h1.4c1.3 0 2.5.6 3.3 1.7l6.1 8.6c.7 1.1 2 1.7 3.3 1.7H20" /><path d="M18 14l4 4-4 4" />
               </svg>
               {t('random.title')}
             </h2>
@@ -336,17 +326,7 @@ export function RandomMixModal() {
               }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="8" height="8" rx="2" />
-                <rect x="14" y="2" width="8" height="8" rx="2" />
-                <rect x="2" y="14" width="8" height="8" rx="2" />
-                <rect x="14" y="14" width="8" height="8" rx="2" />
-                <circle cx="6" cy="6" r="1" fill="currentColor" />
-                <circle cx="18" cy="4" r="1" fill="currentColor" />
-                <circle cx="16" cy="6" r="1" fill="currentColor" />
-                <circle cx="4" cy="16" r="1" fill="currentColor" />
-                <circle cx="8" cy="16" r="1" fill="currentColor" />
-                <circle cx="4" cy="18" r="1" fill="currentColor" />
-                <circle cx="18" cy="18" r="1" fill="currentColor" />
+                <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H20" /><path d="M18 2l4 4-4 4" /><path d="M2 6h1.4c1.3 0 2.5.6 3.3 1.7l6.1 8.6c.7 1.1 2 1.7 3.3 1.7H20" /><path d="M18 14l4 4-4 4" />
               </svg>
               {t('random.generate')}
             </button>
