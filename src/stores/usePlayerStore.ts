@@ -70,23 +70,6 @@ export const usePlayerStore = create<PlayerState>()(
         audioEngine.setEqualizer(settings.eqBass, settings.eqMid, settings.eqTreble)
 
         set({ initialized: true })
-
-        // Resume sounds that were playing before refresh
-        // Small delay to ensure zustand persist has rehydrated
-        setTimeout(() => {
-          const state = get()
-          if (state.activeSounds.length > 0 && !state.isPlaying) {
-            for (const as of state.activeSounds) {
-              const sound = sounds.find((s) => s.id === as.soundId)
-              if (!sound) continue
-              const vol = as.volume * state.masterVolume
-              startSoundInEngine(as.soundId, sound.generator, sound.sampleUrl, vol)
-            }
-            startBackgroundKeepAlive()
-            set({ isPlaying: true })
-            get().updateMediaInfo()
-          }
-        }, 100)
       },
 
       toggleSound: (soundId: string) => {
@@ -152,6 +135,7 @@ export const usePlayerStore = create<PlayerState>()(
       },
 
       stopAll: () => {
+        get().stopPreview()
         audioEngine.stopAll()
         stopBackgroundKeepAlive()
         useSleepStore.getState().endSession()
@@ -312,6 +296,8 @@ export const usePlayerStore = create<PlayerState>()(
         const state = get()
         if (!state.initialized) return
 
+        // Stop preview if any
+        get().stopPreview()
         audioEngine.stopAll()
 
         for (const activeSound of sceneSounds) {
@@ -391,7 +377,6 @@ export const usePlayerStore = create<PlayerState>()(
         masterVolume: state.masterVolume,
         timer: state.timer,
         favorites: state.favorites,
-        activeSounds: state.activeSounds.map(({ soundId, volume }) => ({ soundId, volume })),
       }),
     }
   )

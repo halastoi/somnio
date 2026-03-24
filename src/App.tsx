@@ -7,6 +7,7 @@ import { PlayerBar } from './components/player/PlayerBar'
 import { TimerModal, TimerBadge } from './components/player/TimerModal'
 import { RandomMixModal, quickRandomMix } from './components/random/RandomMixModal'
 import { useRandomMixStore } from './stores/useRandomMixStore'
+import { scenes } from './data/scenes'
 import { BreathingExercise } from './components/breathing/BreathingExercise'
 import { MixList } from './components/mixer/MixList'
 import { SettingsPage } from './components/settings/SettingsPage'
@@ -26,6 +27,9 @@ export default function App() {
   const initialized = usePlayerStore((s) => s.initialized)
   const timer = usePlayerStore((s) => s.timer)
   const t = useSettingsStore((s) => s.t)
+  const isPlaying = usePlayerStore((s) => s.isPlaying)
+  const activeSounds = usePlayerStore((s) => s.activeSounds)
+  const loadScene = usePlayerStore((s) => s.loadScene)
   const leavingRef = useRef(false)
 
   useEffect(() => {
@@ -201,6 +205,41 @@ export default function App() {
           {activeTab === 'breathing' && <BreathingExercise />}
           {activeTab === 'settings' && <SettingsPage />}
         </main>
+
+        {/* Quick Play floating button - visible only when nothing is playing */}
+        {!isPlaying && activeSounds.length === 0 && activeTab === 'sounds' && (
+          <div style={{
+            display: 'flex', justifyContent: 'center',
+            padding: '0 0 12px', flexShrink: 0,
+          }}>
+            <button
+              onClick={async () => {
+                if (!initialized) await init()
+                const scene = scenes[Math.floor(Math.random() * scenes.length)]
+                loadScene(scene.sounds, scene.id)
+              }}
+              style={{
+                padding: '14px 28px',
+                borderRadius: '50px',
+                background: 'linear-gradient(135deg, var(--accent), var(--accent-light))',
+                color: '#fff',
+                fontSize: '15px',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 24px var(--accent-glow), 0 2px 8px rgba(0,0,0,0.3)',
+                border: 'none',
+                letterSpacing: '0.3px',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="none">
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+              {t('quickPlay') ?? 'Quick Play'}
+            </button>
+          </div>
+        )}
 
         {/* Player Bar */}
         <PlayerBar />
