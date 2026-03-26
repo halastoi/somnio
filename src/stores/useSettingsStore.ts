@@ -140,6 +140,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'sounds.search': 'Search sounds...',
     'sounds.noResults': 'No sounds found',
     'sounds.favorites': 'Favorites',
+    'settings.autoStop': 'Auto Stop',
+    'settings.autoStop.desc': 'Stop after inactivity',
+    'settings.autoStop.minutes': 'min',
     'settings.binaural': 'Binaural Beats',
     'settings.binaural.desc': 'Show binaural beats category',
     'sounds.allSounds': 'All Sounds',
@@ -298,6 +301,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'sounds.search': 'Cauta sunete...',
     'sounds.noResults': 'Niciun sunet gasit',
     'sounds.favorites': 'Favorite',
+    'settings.autoStop': 'Oprire Automata',
+    'settings.autoStop.desc': 'Opreste dupa inactivitate',
+    'settings.autoStop.minutes': 'min',
     'settings.binaural': 'Frecvente Binaurale',
     'settings.binaural.desc': 'Afiseaza categoria frecvente binaurale',
     'sounds.allSounds': 'Toate Sunetele',
@@ -456,6 +462,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'sounds.search': 'Поиск звуков...',
     'sounds.noResults': 'Звуки не найдены',
     'sounds.favorites': 'Избранные',
+    'settings.autoStop': 'Автоостановка',
+    'settings.autoStop.desc': 'Остановка при неактивности',
+    'settings.autoStop.minutes': 'мин',
     'settings.binaural': 'Бинауральные ритмы',
     'settings.binaural.desc': 'Показывать категорию бинауральных ритмов',
     'sounds.allSounds': 'Все звуки',
@@ -614,6 +623,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'sounds.search': 'Buscar sonidos...',
     'sounds.noResults': 'No se encontraron sonidos',
     'sounds.favorites': 'Favoritos',
+    'settings.autoStop': 'Parada Automatica',
+    'settings.autoStop.desc': 'Detener tras inactividad',
+    'settings.autoStop.minutes': 'min',
     'settings.binaural': 'Ritmos Binaurales',
     'settings.binaural.desc': 'Mostrar categoría de ritmos binaurales',
     'sounds.allSounds': 'Todos los sonidos',
@@ -701,10 +713,13 @@ interface SettingsState {
   eqBass: number
   eqMid: number
   eqTreble: number
+  autoStopEnabled: boolean
+  autoStopMinutes: number
   setLanguage: (lang: Language) => void
   setTheme: (theme: ThemeMode) => void
   setBinauralEnabled: (v: boolean) => void
   setEq: (bass: number, mid: number, treble: number) => void
+  setAutoStop: (enabled: boolean, minutes?: number) => void
   t: (key: string) => string
 }
 
@@ -717,12 +732,18 @@ export const useSettingsStore = create<SettingsState>()(
       eqBass: 0,
       eqMid: 0,
       eqTreble: 0,
+      autoStopEnabled: true,
+      autoStopMinutes: 30,
       setLanguage: (language: Language) => set({ language }),
       setTheme: (theme: ThemeMode) => {
         set({ theme })
         applyTheme(theme)
       },
       setBinauralEnabled: (binauralEnabled: boolean) => set({ binauralEnabled }),
+      setAutoStop: (autoStopEnabled: boolean, autoStopMinutes?: number) => set({
+        autoStopEnabled,
+        ...(autoStopMinutes !== undefined ? { autoStopMinutes } : {}),
+      }),
       setEq: (bass: number, mid: number, treble: number) => {
         set({ eqBass: bass, eqMid: mid, eqTreble: treble })
         audioEngine.setEqualizer(bass, mid, treble)

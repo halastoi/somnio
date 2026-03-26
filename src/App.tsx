@@ -67,6 +67,34 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState)
   }, [timerOpen, activeTab, showExitConfirm])
 
+  // Auto-stop on inactivity
+  useEffect(() => {
+    const { autoStopEnabled, autoStopMinutes } = useSettingsStore.getState()
+    if (!autoStopEnabled || !isPlaying) return
+
+    let inactivityTimer: ReturnType<typeof setTimeout> | null = null
+
+    const resetTimer = () => {
+      if (inactivityTimer) clearTimeout(inactivityTimer)
+      inactivityTimer = setTimeout(() => {
+        const state = usePlayerStore.getState()
+        if (state.isPlaying && !state.timer.enabled) {
+          state.stopAll()
+        }
+      }, autoStopMinutes * 60 * 1000)
+    }
+
+    resetTimer()
+
+    const events = ['touchstart', 'click', 'scroll', 'keydown']
+    events.forEach((e) => document.addEventListener(e, resetTimer, { passive: true }))
+
+    return () => {
+      if (inactivityTimer) clearTimeout(inactivityTimer)
+      events.forEach((e) => document.removeEventListener(e, resetTimer))
+    }
+  }, [isPlaying])
+
   return (
     <>
       <AnimatedBackground />

@@ -16,7 +16,7 @@ const themeOptions: { id: ThemeMode; key: string }[] = [
 ]
 
 export function SettingsPage() {
-  const { language, theme, binauralEnabled, setLanguage, setTheme, setBinauralEnabled, t, eqBass, eqMid, eqTreble, setEq } = useSettingsStore()
+  const { language, theme, binauralEnabled, autoStopEnabled, autoStopMinutes, setLanguage, setTheme, setBinauralEnabled, setAutoStop, t, eqBass, eqMid, eqTreble, setEq } = useSettingsStore()
   const { history, streak } = useSleepStore()
   const sleepToday = useSleepStore((s) => s.getToday())
   const sleepWeek = useSleepStore((s) => s.getWeekTotal())
@@ -138,6 +138,56 @@ export function SettingsPage() {
           >
             {t('eq.reset')}
           </button>
+        </div>
+      </section>
+
+      {/* Auto Stop on inactivity */}
+      <section style={{ marginBottom: '28px' }}>
+        <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          {t('settings.autoStop')}
+        </h3>
+        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <button
+            onClick={() => setAutoStop(!autoStopEnabled)}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              width: '100%', marginBottom: autoStopEnabled ? '14px' : '0',
+            }}
+          >
+            <span style={{ fontSize: '14px', fontWeight: 500 }}>{t('settings.autoStop.desc')}</span>
+            <div style={{
+              width: '44px', height: '24px', borderRadius: '12px',
+              background: autoStopEnabled ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
+              position: 'relative', transition: 'background 0.2s', flexShrink: 0,
+            }}>
+              <div style={{
+                width: '20px', height: '20px', borderRadius: '50%', background: '#fff',
+                position: 'absolute', top: '2px',
+                left: autoStopEnabled ? '22px' : '2px',
+                transition: 'left 0.2s',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+              }} />
+            </div>
+          </button>
+          {autoStopEnabled && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{t('settings.autoStop.desc')}</span>
+                <span style={{ fontSize: '13px', color: 'var(--accent-light)', fontWeight: 600 }}>
+                  {autoStopMinutes} {t('settings.autoStop.minutes')}
+                </span>
+              </div>
+              <input
+                type="range"
+                min={10}
+                max={120}
+                step={10}
+                value={autoStopMinutes}
+                onChange={(e) => setAutoStop(true, Number(e.target.value))}
+                style={{ width: '100%' }}
+              />
+            </div>
+          )}
         </div>
       </section>
 
