@@ -66,7 +66,7 @@ export function Slider({ value, min = 0, max = 1, onChange, height = 36 }: Slide
           width: '100%',
           height: '6px',
           borderRadius: '3px',
-          background: 'var(--glass)',
+          background: 'var(--bg-card)',
           border: '1px solid var(--glass-border)',
           position: 'relative',
         }}
