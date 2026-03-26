@@ -62,6 +62,8 @@ function TabIcon({ type, active }: { type: string; active: boolean }) {
 
 export function Navigation({ activeTab, onTabChange }: NavigationProps) {
   const t = useSettingsStore((s) => s.t)
+  const theme = useSettingsStore((s) => s.theme)
+  const isLight = theme === 'light' || theme === 'sand'
 
   return (
     <nav
@@ -70,10 +72,10 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
         justifyContent: 'space-around',
         padding: '8px 0',
         paddingTop: '10px',
-        background: 'rgba(0,0,0,0.4)',
+        background: isLight ? 'var(--bg-secondary)' : 'rgba(0,0,0,0.4)',
         backdropFilter: 'blur(30px)',
         WebkitBackdropFilter: 'blur(30px)',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
+        borderTop: isLight ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.08)',
       }}
     >
       {tabs.map((tab) => {

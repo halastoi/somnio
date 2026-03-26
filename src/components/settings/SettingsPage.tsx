@@ -11,8 +11,8 @@ const languages: { id: Language; label: string; flag: string }[] = [
 const themeOptions: { id: ThemeMode; key: string }[] = [
   { id: 'dark', key: 'settings.theme.dark' },
   { id: 'midnight', key: 'settings.theme.midnight' },
-  { id: 'amoled', key: 'settings.theme.amoled' },
-  { id: 'ocean', key: 'settings.theme.ocean' },
+  { id: 'light', key: 'settings.theme.light' },
+  { id: 'sand', key: 'settings.theme.sand' },
 ]
 
 export function SettingsPage() {
@@ -465,8 +465,8 @@ function getPreviewColors(id: ThemeMode) {
   const map: Record<ThemeMode, { bg: string; card: string; accent: string }> = {
     dark: { bg: '#0a0a1a', card: '#181838', accent: '#7c5cfc' },
     midnight: { bg: '#0d1117', card: '#1c2333', accent: '#58a6ff' },
-    amoled: { bg: '#000000', card: '#141414', accent: '#bb86fc' },
-    ocean: { bg: '#0a1628', card: '#152640', accent: '#00b4d8' },
+    light: { bg: '#ffffff', card: '#f2f2f7', accent: '#5b3fcc' },
+    sand: { bg: '#f6f2ec', card: '#ffffff', accent: '#8b5e3c' },
   }
   return map[id]
 }

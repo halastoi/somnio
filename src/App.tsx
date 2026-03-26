@@ -26,6 +26,8 @@ export default function App() {
   const initialized = usePlayerStore((s) => s.initialized)
   const timer = usePlayerStore((s) => s.timer)
   const t = useSettingsStore((s) => s.t)
+  const theme = useSettingsStore((s) => s.theme)
+  const isLight = theme === 'light' || theme === 'sand'
   const isPlaying = usePlayerStore((s) => s.isPlaying)
   const activeSounds = usePlayerStore((s) => s.activeSounds)
   const loadScene = usePlayerStore((s) => s.loadScene)
@@ -117,10 +119,10 @@ export default function App() {
             alignItems: 'center',
             justifyContent: 'space-between',
             flexShrink: 0,
-            background: 'rgba(0,0,0,0.2)',
+            background: isLight ? 'var(--bg-secondary)' : 'rgba(0,0,0,0.2)',
             backdropFilter: 'blur(30px)',
             WebkitBackdropFilter: 'blur(30px)',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
+            borderBottom: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.04)',
           }}
         >
           <div>

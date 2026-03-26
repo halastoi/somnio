@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import { audioEngine } from '../audio/AudioEngine'
 
 export type Language = 'en' | 'ro' | 'ru' | 'es'
-export type ThemeMode = 'dark' | 'midnight' | 'amoled' | 'ocean'
+export type ThemeMode = 'dark' | 'midnight' | 'light' | 'sand'
 
 export interface ThemeColors {
   bgPrimary: string
@@ -37,25 +37,27 @@ export const themes: Record<ThemeMode, ThemeColors> = {
     accentGlow: 'rgba(88, 166, 255, 0.3)',
     accentLight: '#79c0ff',
   },
-  amoled: {
-    bgPrimary: '#000000',
-    bgSecondary: '#0a0a0a',
-    bgCard: '#141414',
-    bgCardHover: '#1e1e1e',
-    bgActive: '#1a1a3a',
-    accent: '#bb86fc',
-    accentGlow: 'rgba(187, 134, 252, 0.3)',
-    accentLight: '#d4a5ff',
+  light: {
+    // Clean white - inspired by Apple Music
+    bgPrimary: '#ffffff',
+    bgSecondary: '#f2f2f7',
+    bgCard: '#f2f2f7',
+    bgCardHover: '#e5e5ea',
+    bgActive: '#e8e0f8',
+    accent: '#5b3fcc',
+    accentGlow: 'rgba(91, 63, 204, 0.2)',
+    accentLight: '#7c5cfc',
   },
-  ocean: {
-    bgPrimary: '#0a1628',
-    bgSecondary: '#0f1d32',
-    bgCard: '#152640',
-    bgCardHover: '#1c3050',
-    bgActive: '#1a3d5c',
-    accent: '#00b4d8',
-    accentGlow: 'rgba(0, 180, 216, 0.3)',
-    accentLight: '#48cae4',
+  sand: {
+    // Warm sand - inspired by Calm/Headspace
+    bgPrimary: '#f6f2ec',
+    bgSecondary: '#ece6dc',
+    bgCard: '#ffffff',
+    bgCardHover: '#f0eae0',
+    bgActive: '#e6d8c8',
+    accent: '#8b5e3c',
+    accentGlow: 'rgba(139, 94, 60, 0.2)',
+    accentLight: '#a67a56',
   },
 }
 
@@ -172,8 +174,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.theme': 'Theme',
     'settings.theme.dark': 'Dark',
     'settings.theme.midnight': 'Midnight',
-    'settings.theme.amoled': 'AMOLED',
-    'settings.theme.ocean': 'Ocean',
+    'settings.theme.light': 'Light',
+    'settings.theme.sand': 'Sand',
     'settings.about': 'About',
     'settings.version': 'Version',
     'settings.donate': 'Support Somnio',
@@ -353,8 +355,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.theme': 'Tema',
     'settings.theme.dark': 'Intuneric',
     'settings.theme.midnight': 'Miezul Noptii',
-    'settings.theme.amoled': 'AMOLED',
-    'settings.theme.ocean': 'Ocean',
+    'settings.theme.light': 'Light',
+    'settings.theme.sand': 'Sand',
     'settings.about': 'Despre',
     'settings.version': 'Versiune',
     'settings.donate': 'Sustine Somnio',
@@ -534,8 +536,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.theme': 'Тема',
     'settings.theme.dark': 'Тёмная',
     'settings.theme.midnight': 'Полночь',
-    'settings.theme.amoled': 'AMOLED',
-    'settings.theme.ocean': 'Океан',
+    'settings.theme.light': 'Light',
+    'settings.theme.sand': 'Песочная',
     'settings.about': 'О приложении',
     'settings.version': 'Версия',
     'settings.donate': 'Поддержать Somnio',
@@ -715,8 +717,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.theme': 'Tema',
     'settings.theme.dark': 'Oscuro',
     'settings.theme.midnight': 'Medianoche',
-    'settings.theme.amoled': 'AMOLED',
-    'settings.theme.ocean': 'Océano',
+    'settings.theme.light': 'Light',
+    'settings.theme.sand': 'Arena',
     'settings.about': 'Acerca de',
     'settings.version': 'Versión',
     'settings.donate': 'Apoyar Somnio',
@@ -853,4 +855,35 @@ function applyTheme(mode: ThemeMode): void {
   root.style.setProperty('--accent', t.accent)
   root.style.setProperty('--accent-glow', t.accentGlow)
   root.style.setProperty('--accent-light', t.accentLight)
+
+  const isLight = mode === 'light' || mode === 'sand'
+  if (isLight) {
+    root.style.setProperty('--text-primary', '#1c1c1e')
+    root.style.setProperty('--text-secondary', '#48484a')
+    root.style.setProperty('--text-muted', '#8e8e93')
+    root.style.setProperty('--glass', 'rgba(0, 0, 0, 0.03)')
+    root.style.setProperty('--glass-border', 'rgba(0, 0, 0, 0.1)')
+    root.style.setProperty('--glass-hover', 'rgba(0, 0, 0, 0.06)')
+    root.style.setProperty('--success', '#16a34a')
+    root.style.setProperty('--danger', '#dc2626')
+    root.style.setProperty('--shadow-sm', '0 1px 3px rgba(0,0,0,0.08)')
+    root.style.setProperty('--shadow-md', '0 4px 12px rgba(0,0,0,0.08)')
+    root.style.setProperty('--shadow-lg', '0 8px 24px rgba(0,0,0,0.1)')
+    root.style.setProperty('--shadow-glow-accent', '0 0 12px ' + t.accentGlow)
+  } else {
+    root.style.setProperty('--text-primary', '#e8e8f0')
+    root.style.setProperty('--text-secondary', '#8888aa')
+    root.style.setProperty('--text-muted', '#555570')
+    root.style.setProperty('--glass', 'rgba(255, 255, 255, 0.04)')
+    root.style.setProperty('--glass-border', 'rgba(255, 255, 255, 0.08)')
+    root.style.setProperty('--glass-hover', 'rgba(255, 255, 255, 0.07)')
+    root.style.setProperty('--success', '#4ade80')
+    root.style.setProperty('--danger', '#f87171')
+    root.style.setProperty('--shadow-sm', '0 2px 8px rgba(0,0,0,0.3)')
+    root.style.setProperty('--shadow-md', '0 4px 16px rgba(0,0,0,0.4)')
+    root.style.setProperty('--shadow-lg', '0 8px 32px rgba(0,0,0,0.5)')
+    root.style.setProperty('--shadow-glow-accent', '0 0 20px ' + t.accentGlow + ', 0 4px 16px rgba(0,0,0,0.3)')
+  }
+
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', t.bgPrimary)
 }
