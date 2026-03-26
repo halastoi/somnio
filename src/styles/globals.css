@@ -98,8 +98,8 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-track {
   height: 6px;
   border-radius: 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--glass-border);
+  background: var(--slider-track, #2a2a4a);
+  border: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -117,8 +117,8 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-moz-range-track {
   height: 6px;
   border-radius: 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--glass-border);
+  background: var(--slider-track, #2a2a4a);
+  border: none;
 }
 
 input[type="range"]::-moz-range-thumb {

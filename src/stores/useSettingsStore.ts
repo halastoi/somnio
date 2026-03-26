@@ -857,6 +857,8 @@ function applyTheme(mode: ThemeMode): void {
   root.style.setProperty('--accent-light', t.accentLight)
 
   const isLight = mode === 'light' || mode === 'sand'
+  root.style.setProperty('--slider-track', isLight ? '#c7c7cc' : '#2a2a4a')
+
   if (isLight) {
     root.style.setProperty('--text-primary', '#1c1c1e')
     root.style.setProperty('--text-secondary', '#48484a')
