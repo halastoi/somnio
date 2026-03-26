@@ -25,7 +25,7 @@ const sceneStyles: Record<string, { bg: string; glow: string }> = {
 }
 
 export function MixList() {
-  const { savedMixes, activeSounds, saveMix, loadMix, deleteMix, loadScene } = usePlayerStore()
+  const { savedMixes, activeSounds, saveMix, loadMix, deleteMix, loadScene, favoriteScenes, toggleFavoriteScene } = usePlayerStore()
   const t = useSettingsStore((s) => s.t)
   const [subTab, setSubTab] = useState<SubTab>('scenes')
   const [showSaveInput, setShowSaveInput] = useState(false)
@@ -92,7 +92,7 @@ export function MixList() {
 
       {/* Content */}
       <div style={{ flex: 1, overflowY: 'auto' }}>
-        {subTab === 'scenes' && <ScenesView scenes={scenes} loadScene={loadScene} t={t} />}
+        {subTab === 'scenes' && <ScenesView scenes={scenes} loadScene={loadScene} t={t} favoriteScenes={favoriteScenes} toggleFavoriteScene={toggleFavoriteScene} />}
         {subTab === 'myMixes' && (
           <MyMixesView
             savedMixes={savedMixes}
@@ -113,15 +113,25 @@ export function MixList() {
   )
 }
 
-function ScenesView({ scenes: sceneList, loadScene, t }: {
+function ScenesView({ scenes: sceneList, loadScene, t, favoriteScenes, toggleFavoriteScene }: {
   scenes: typeof scenes
   loadScene: (sounds: { soundId: string; volume: number }[], sceneId?: string) => void
   t: (key: string) => string
+  favoriteScenes: string[]
+  toggleFavoriteScene: (id: string) => void
 }) {
+  // Sort: favorites first, then rest
+  const sorted = [...sceneList].sort((a, b) => {
+    const aFav = favoriteScenes.includes(a.id) ? 0 : 1
+    const bFav = favoriteScenes.includes(b.id) ? 0 : 1
+    return aFav - bFav
+  })
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-      {sceneList.map((scene) => {
+      {sorted.map((scene) => {
         const style = sceneStyles[scene.id]
+        const isFav = favoriteScenes.includes(scene.id)
         return (
           <motion.button
             key={scene.id}
@@ -159,6 +169,21 @@ function ScenesView({ scenes: sceneList, loadScene, t }: {
             <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', lineHeight: '1.4' }}>
               {t(scene.descKey)}
             </span>
+            {/* Favorite heart */}
+            <button
+              onClick={(e) => { e.stopPropagation(); toggleFavoriteScene(scene.id) }}
+              style={{
+                position: 'absolute', top: '8px', right: '8px',
+                width: '28px', height: '28px', minWidth: '28px', minHeight: '28px',
+                borderRadius: '50%', background: 'rgba(0,0,0,0.3)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: 'none', padding: 0,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill={isFav ? '#f87171' : 'none'} stroke={isFav ? '#f87171' : 'rgba(255,255,255,0.6)'} strokeWidth="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </button>
           </motion.button>
         )
       })}

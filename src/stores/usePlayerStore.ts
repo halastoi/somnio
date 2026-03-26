@@ -16,6 +16,7 @@ interface PlayerState {
   savedMixes: Mix[]
   initialized: boolean
   favorites: string[]
+  favoriteScenes: string[]
   activeSceneId: string | null
   previewingSoundId: string | null
 
@@ -31,6 +32,7 @@ interface PlayerState {
   loadMix: (mixId: string) => void
   deleteMix: (mixId: string) => void
   toggleFavorite: (id: string) => void
+  toggleFavoriteScene: (id: string) => void
   playNextFavorite: () => void
   playPrevFavorite: () => void
   updateMediaInfo: () => void
@@ -54,6 +56,7 @@ export const usePlayerStore = create<PlayerState>()(
       savedMixes: [],
       initialized: false,
       favorites: [],
+      favoriteScenes: [],
       activeSceneId: null,
       previewingSoundId: null,
 
@@ -197,6 +200,15 @@ export const usePlayerStore = create<PlayerState>()(
           favorites: favorites.includes(id)
             ? favorites.filter((f) => f !== id)
             : [...favorites, id],
+        })
+      },
+
+      toggleFavoriteScene: (id: string) => {
+        const { favoriteScenes } = get()
+        set({
+          favoriteScenes: favoriteScenes.includes(id)
+            ? favoriteScenes.filter((f) => f !== id)
+            : [...favoriteScenes, id],
         })
       },
 
@@ -377,6 +389,7 @@ export const usePlayerStore = create<PlayerState>()(
         masterVolume: state.masterVolume,
         timer: state.timer,
         favorites: state.favorites,
+        favoriteScenes: state.favoriteScenes,
       }),
     }
   )
