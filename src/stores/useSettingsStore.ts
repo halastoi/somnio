@@ -732,7 +732,7 @@ export const useSettingsStore = create<SettingsState>()(
       eqBass: 0,
       eqMid: 0,
       eqTreble: 0,
-      autoStopEnabled: true,
+      autoStopEnabled: false,
       autoStopMinutes: 30,
       setLanguage: (language: Language) => set({ language }),
       setTheme: (theme: ThemeMode) => {
