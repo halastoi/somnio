@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { usePlayerStore } from '../../stores/usePlayerStore'
+import { useSettingsStore } from '../../stores/useSettingsStore'
 import { sounds } from '../../audio/sounds'
 
 const CATEGORY_COLORS: Record<string, [string, string, string]> = {
@@ -18,6 +19,8 @@ const CATEGORY_COLORS: Record<string, [string, string, string]> = {
 export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const activeSounds = usePlayerStore((s) => s.activeSounds)
+  const theme = useSettingsStore((s) => s.theme)
+  const isLight = theme === 'light' || theme === 'sand'
   const animRef = useRef<number>(0)
   const colorsRef = useRef({ r: 10, g: 10, b: 26 })
   const particlesRef = useRef<Particle[]>([])
@@ -157,6 +160,7 @@ export function AnimatedBackground() {
         inset: 0,
         zIndex: 0,
         pointerEvents: 'none',
+        opacity: isLight ? 0.15 : 1,
       }}
     />
   )

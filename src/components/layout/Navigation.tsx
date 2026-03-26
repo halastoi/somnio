@@ -75,7 +75,7 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
         background: isLight ? 'var(--bg-secondary)' : 'rgba(0,0,0,0.4)',
         backdropFilter: 'blur(30px)',
         WebkitBackdropFilter: 'blur(30px)',
-        borderTop: isLight ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.08)',
+        borderTop: '1px solid var(--glass-border)',
       }}
     >
       {tabs.map((tab) => {

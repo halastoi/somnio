@@ -122,7 +122,7 @@ export default function App() {
             background: isLight ? 'var(--bg-secondary)' : 'rgba(0,0,0,0.2)',
             backdropFilter: 'blur(30px)',
             WebkitBackdropFilter: 'blur(30px)',
-            borderBottom: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.04)',
+            borderBottom: '1px solid var(--glass-border)',
           }}
         >
           <div>
@@ -161,11 +161,11 @@ export default function App() {
                 borderRadius: '50%',
                 background: timer.enabled
                   ? 'linear-gradient(135deg, var(--accent), #9d82ff)'
-                  : 'rgba(255,255,255,0.06)',
+                  : 'var(--bg-card)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                border: timer.enabled ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                border: timer.enabled ? 'none' : '1px solid var(--glass-border)',
                 boxShadow: timer.enabled ? '0 4px 20px var(--accent-glow)' : 'none',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
@@ -278,7 +278,7 @@ export default function App() {
               padding: '28px 24px',
               maxWidth: '320px',
               width: '100%',
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid var(--glass-border)',
               textAlign: 'center',
             }}
           >
@@ -319,11 +319,11 @@ export default function App() {
                   flex: 1,
                   padding: '14px',
                   borderRadius: '12px',
-                  background: 'rgba(255,255,255,0.06)',
+                  background: 'var(--bg-card)',
                   color: 'var(--text-muted)',
                   fontWeight: 500,
                   fontSize: '15px',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  border: '1px solid var(--glass-border)',
                 }}
               >
                 {t('exit.leave')}

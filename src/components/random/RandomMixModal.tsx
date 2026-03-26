@@ -127,21 +127,21 @@ export function RandomMixModal() {
               maxWidth: '480px',
               maxHeight: '85vh',
               overflowY: 'auto',
-              border: '1px solid rgba(255,255,255,0.06)',
+              border: '1px solid var(--glass-border)',
               borderBottom: 'none',
             }}
           >
             {/* Handle + Close */}
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', position: 'relative' }}>
-              <div style={{ width: '48px', height: '5px', borderRadius: '3px', background: 'rgba(255,255,255,0.2)' }} />
+              <div style={{ width: '48px', height: '5px', borderRadius: '3px', background: 'var(--text-muted)' }} />
               <button
                 onClick={() => config.setShowConfig(false)}
                 style={{
                   position: 'absolute', right: 0, top: '-4px',
                   width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
-                  borderRadius: '50%', background: 'rgba(255,255,255,0.08)',
+                  borderRadius: '50%', background: 'var(--bg-card)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  border: '1px solid var(--glass-border)',
                 }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2.5" strokeLinecap="round">
@@ -169,8 +169,8 @@ export function RandomMixModal() {
                       flex: 1,
                       padding: '10px 6px',
                       borderRadius: '12px',
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.08)',
+                      background: 'var(--glass)',
+                      border: '1px solid var(--glass-border)',
                       color: 'var(--text-primary)',
                       fontSize: '12px',
                       fontWeight: 500,
@@ -248,8 +248,8 @@ export function RandomMixModal() {
                       style={{
                         padding: '6px 10px',
                         borderRadius: '8px',
-                        background: active ? 'rgba(124,92,252,0.2)' : 'rgba(255,255,255,0.04)',
-                        border: active ? '1px solid rgba(124,92,252,0.4)' : '1px solid rgba(255,255,255,0.08)',
+                        background: active ? 'rgba(124,92,252,0.2)' : 'var(--glass)',
+                        border: active ? '1px solid rgba(124,92,252,0.4)' : '1px solid var(--glass-border)',
                         color: active ? 'var(--accent-light)' : 'var(--text-muted)',
                         fontSize: '12px',
                         fontWeight: active ? 600 : 400,
@@ -278,8 +278,8 @@ export function RandomMixModal() {
                 width: '100%',
                 padding: '12px',
                 borderRadius: '10px',
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.06)',
+                background: 'var(--glass)',
+                border: '1px solid var(--glass-border)',
                 marginBottom: '20px',
                 minHeight: '44px',
               }}
@@ -289,7 +289,7 @@ export function RandomMixModal() {
                 width: '46px',
                 height: '26px',
                 borderRadius: '13px',
-                background: config.avoidSameCategory ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
+                background: config.avoidSameCategory ? 'var(--accent)' : 'var(--glass-border)',
                 position: 'relative',
                 transition: 'background 0.3s',
               }}>

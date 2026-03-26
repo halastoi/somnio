@@ -255,7 +255,7 @@ export function BreathingExercise() {
           style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
             padding: '24px 40px', borderRadius: 'var(--radius-md)',
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+            background: 'var(--glass)', border: '1px solid var(--glass-border)',
           }}
         >
           <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--accent)' }}>
@@ -264,7 +264,7 @@ export function BreathingExercise() {
           <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
             {cycleCount !== 1 ? t('breathing.cycles') : t('breathing.cycle')}
           </div>
-          <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.08)', margin: '4px 0' }} />
+          <div style={{ width: '100%', height: '1px', background: 'var(--glass-border)', margin: '4px 0' }} />
           <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
             {t('breathing.totalTime')}: {totalMinutes} {t('breathing.minutes')}
           </div>
@@ -314,9 +314,9 @@ export function BreathingExercise() {
               style={{
                 padding: '18px 20px',
                 borderRadius: 'var(--radius-md)',
-                background: PATTERN_GRADIENTS[p.id] ?? 'rgba(255,255,255,0.04)',
+                background: PATTERN_GRADIENTS[p.id] ?? 'var(--glass)',
                 backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                border: '1px solid var(--glass-border)',
                 textAlign: 'left',
                 display: 'flex',
                 alignItems: 'center',
@@ -343,7 +343,7 @@ export function BreathingExercise() {
         {selectedPattern === null && (
           <div style={{
             padding: '16px', borderRadius: 'var(--radius-md)',
-            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+            background: 'var(--glass)', border: '1px solid var(--glass-border)',
             marginBottom: '24px',
           }}>
             <div style={{ fontSize: '14px', fontWeight: 500, marginBottom: '12px', color: 'var(--text-secondary)' }}>
@@ -354,7 +354,7 @@ export function BreathingExercise() {
                 <div key={i} style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '8px 12px', borderRadius: '10px', gap: '10px',
-                  background: 'rgba(255,255,255,0.04)',
+                  background: 'var(--glass)',
                 }}>
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)', flexShrink: 0 }}>{label}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -362,7 +362,7 @@ export function BreathingExercise() {
                       onClick={() => adjustCustom(i, -1)}
                       style={{
                         width: '26px', height: '26px', borderRadius: '50%', minWidth: '26px', minHeight: '26px',
-                        background: 'rgba(255,255,255,0.1)', fontSize: '14px', fontWeight: 700,
+                        background: 'var(--glass-border)', fontSize: '14px', fontWeight: 700,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
                     >−</button>
@@ -373,7 +373,7 @@ export function BreathingExercise() {
                       onClick={() => adjustCustom(i, 1)}
                       style={{
                         width: '26px', height: '26px', borderRadius: '50%', minWidth: '26px', minHeight: '26px',
-                        background: 'rgba(255,255,255,0.1)', fontSize: '14px', fontWeight: 700,
+                        background: 'var(--glass-border)', fontSize: '14px', fontWeight: 700,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
                     >+</button>
@@ -400,8 +400,8 @@ export function BreathingExercise() {
                   onClick={() => handleSceneSelect(bs.id)}
                   style={{
                     padding: '8px 14px', borderRadius: 'var(--radius-full)',
-                    background: isActive ? 'rgba(var(--accent-rgb, 124,92,252), 0.2)' : 'rgba(255,255,255,0.05)',
-                    border: isActive ? '1px solid var(--accent)' : '1px solid rgba(255,255,255,0.08)',
+                    background: isActive ? 'rgba(var(--accent-rgb, 124,92,252), 0.2)' : 'var(--glass)',
+                    border: isActive ? '1px solid var(--accent)' : '1px solid var(--glass-border)',
                     fontSize: '13px',
                     display: 'flex', alignItems: 'center', gap: '6px',
                     color: isActive ? 'var(--accent-light)' : 'var(--text-secondary)',
@@ -453,8 +453,8 @@ export function BreathingExercise() {
             color: 'var(--text-primary)',
             padding: '8px 14px 8px 10px',
             borderRadius: '12px',
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.12)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--glass-border)',
           }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -481,10 +481,10 @@ export function BreathingExercise() {
               onClick={() => setSessionDuration(min)}
               style={{
                 padding: '6px 14px', borderRadius: 'var(--radius-full)',
-                background: sessionDuration === min ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
+                background: sessionDuration === min ? 'var(--accent)' : 'var(--bg-card)',
                 color: sessionDuration === min ? '#fff' : 'var(--text-secondary)',
                 fontSize: '13px', fontWeight: sessionDuration === min ? 600 : 400,
-                border: sessionDuration === min ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                border: sessionDuration === min ? 'none' : '1px solid var(--glass-border)',
               }}
             >
               {min === 0 ? '\u221E' : `${min} ${t('breathing.minutes')}`}
@@ -525,7 +525,7 @@ export function BreathingExercise() {
             cy="140"
             r={ringRadius}
             fill="none"
-            stroke="rgba(255,255,255,0.06)"
+            stroke="var(--glass-border)"
             strokeWidth="3"
           />
           {/* Progress ring */}

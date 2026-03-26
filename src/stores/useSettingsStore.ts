@@ -870,6 +870,9 @@ function applyTheme(mode: ThemeMode): void {
     root.style.setProperty('--shadow-md', '0 4px 12px rgba(0,0,0,0.08)')
     root.style.setProperty('--shadow-lg', '0 8px 24px rgba(0,0,0,0.1)')
     root.style.setProperty('--shadow-glow-accent', '0 0 12px ' + t.accentGlow)
+    root.style.setProperty('--gradient-card', 'linear-gradient(145deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.01) 100%)')
+    root.style.setProperty('--border-medium', '1px solid rgba(0,0,0,0.12)')
+    root.style.setProperty('--border-subtle', '1px solid rgba(0,0,0,0.06)')
   } else {
     root.style.setProperty('--text-primary', '#e8e8f0')
     root.style.setProperty('--text-secondary', '#8888aa')
@@ -883,6 +886,9 @@ function applyTheme(mode: ThemeMode): void {
     root.style.setProperty('--shadow-md', '0 4px 16px rgba(0,0,0,0.4)')
     root.style.setProperty('--shadow-lg', '0 8px 32px rgba(0,0,0,0.5)')
     root.style.setProperty('--shadow-glow-accent', '0 0 20px ' + t.accentGlow + ', 0 4px 16px rgba(0,0,0,0.3)')
+    root.style.setProperty('--gradient-card', 'linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)')
+    root.style.setProperty('--border-medium', '1px solid rgba(255,255,255,0.12)')
+    root.style.setProperty('--border-subtle', '1px solid rgba(255,255,255,0.06)')
   }
 
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', t.bgPrimary)

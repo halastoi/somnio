@@ -28,7 +28,7 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
       style={{
         background: isActive
           ? 'linear-gradient(145deg, rgba(124,92,252,0.2) 0%, rgba(124,92,252,0.05) 100%)'
-          : 'linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
+          : 'var(--gradient-card)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         borderRadius: '14px',
@@ -40,10 +40,10 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
           ? '1px solid rgba(250, 204, 21, 0.7)'
           : isActive
           ? '1px solid rgba(124, 92, 252, 0.5)'
-          : '1px solid rgba(255, 255, 255, 0.08)',
+          : '1px solid var(--glass-border)',
         boxShadow: isActive
-          ? '0 0 20px rgba(124,92,252,0.3), 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)'
-          : '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)',
+          ? '0 0 20px rgba(124,92,252,0.3), 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 var(--glass-border)'
+          : '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 var(--glass-border)',
         transition: 'all 0.25s ease',
         height: '88px',
         overflow: 'hidden',
@@ -193,17 +193,17 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
             minWidth: '20px',
             minHeight: '20px',
             borderRadius: '50%',
-            background: 'rgba(255,255,255,0.15)',
+            background: 'var(--glass)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: 0,
             lineHeight: 1,
-            border: '1px solid rgba(255,255,255,0.25)',
+            border: '1px solid var(--glass-border)',
             zIndex: 2,
           }}
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="16" x2="12" y2="12" />
             <line x1="12" y1="8" x2="12.01" y2="8" />
@@ -240,7 +240,7 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
         ) : (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
         )}
@@ -331,8 +331,8 @@ function VolumeBar({ value, onChange }: { value: number; onChange: (v: number) =
           width: '8px',
           height: '100%',
           borderRadius: '4px',
-          background: 'rgba(255,255,255,0.08)',
-          border: '1px solid rgba(255,255,255,0.18)',
+          background: 'var(--glass)',
+          border: '1px solid var(--glass-border)',
           position: 'relative',
           overflow: 'hidden',
         }}

@@ -49,7 +49,7 @@ export function MixList() {
       {/* Subtab toggle */}
       <div style={{
         display: 'flex', gap: '4px', marginBottom: '20px',
-        background: 'rgba(255,255,255,0.04)', borderRadius: '12px', padding: '4px',
+        background: 'var(--glass)', borderRadius: '12px', padding: '4px',
       }}>
         <button
           onClick={() => setSubTab('scenes')}
@@ -142,13 +142,13 @@ function ScenesView({ scenes: sceneList, loadScene, t, favoriteScenes, toggleFav
               borderRadius: '16px',
               padding: '18px 14px',
               textAlign: 'left',
-              border: '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid var(--glass-border)',
               display: 'flex',
               flexDirection: 'column',
               gap: '8px',
               position: 'relative',
               overflow: 'hidden',
-              boxShadow: `0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)`,
+              boxShadow: `0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 var(--glass-border)`,
             }}
           >
             {/* Top accent line */}
@@ -166,7 +166,7 @@ function ScenesView({ scenes: sceneList, loadScene, t, favoriteScenes, toggleFav
             <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
               {t(scene.nameKey)}
             </span>
-            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', lineHeight: '1.4' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.4' }}>
               {t(scene.descKey)}
             </span>
             {/* Favorite heart */}
@@ -180,7 +180,7 @@ function ScenesView({ scenes: sceneList, loadScene, t, favoriteScenes, toggleFav
                 border: 'none', padding: 0,
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill={isFav ? '#f87171' : 'none'} stroke={isFav ? '#f87171' : 'rgba(255,255,255,0.6)'} strokeWidth="2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill={isFav ? '#f87171' : 'none'} stroke={isFav ? '#f87171' : 'var(--text-muted)'} strokeWidth="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
             </button>
@@ -280,17 +280,17 @@ function MyMixesView({ savedMixes, activeSounds, alreadySaved, showSaveInput, se
                 style={{
                   background: isActive
                     ? 'linear-gradient(145deg, rgba(124,92,252,0.15) 0%, rgba(124,92,252,0.04) 100%)'
-                    : 'linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+                    : 'var(--gradient-card)',
                   borderRadius: '14px',
                   padding: '14px 16px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  border: isActive ? '1px solid rgba(124,92,252,0.4)' : '1px solid rgba(255,255,255,0.08)',
+                  border: isActive ? '1px solid rgba(124,92,252,0.4)' : '1px solid var(--glass-border)',
                   borderLeft: isActive ? '3px solid var(--accent-light)' : '3px solid rgba(124,92,252,0.3)',
                   boxShadow: isActive
                     ? '0 0 16px rgba(124,92,252,0.2), 0 4px 12px rgba(0,0,0,0.3)'
-                    : '0 2px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
+                    : '0 2px 12px rgba(0,0,0,0.25), inset 0 1px 0 var(--glass-border)',
                 }}
               >
                 <button
@@ -315,7 +315,7 @@ function MyMixesView({ savedMixes, activeSounds, alreadySaved, showSaveInput, se
                           <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {sound.name}
                           </span>
-                          <div style={{ width: '40px', height: '3px', borderRadius: '2px', background: 'rgba(255,255,255,0.1)', flexShrink: 0 }}>
+                          <div style={{ width: '40px', height: '3px', borderRadius: '2px', background: 'var(--glass-border)', flexShrink: 0 }}>
                             <div style={{ width: `${pct}%`, height: '100%', borderRadius: '2px', background: 'var(--accent)' }} />
                           </div>
                           <span style={{ fontSize: '10px', width: '28px', textAlign: 'right', flexShrink: 0 }}>{pct}%</span>

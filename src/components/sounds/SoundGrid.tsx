@@ -77,7 +77,7 @@ export function SoundGrid() {
             placeholder={t('sounds.search')}
             style={{
               width: '100%', padding: '10px 12px 10px 38px', borderRadius: '10px',
-              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-card)', border: '1px solid var(--glass-border)',
               color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
               marginBottom: '8px', fontFamily: 'inherit',
               transition: 'border-color 0.2s, box-shadow 0.2s',
@@ -87,7 +87,7 @@ export function SoundGrid() {
               e.currentTarget.style.boxShadow = '0 0 12px var(--accent-glow)'
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
+              e.currentTarget.style.borderColor = 'var(--glass-border)'
               e.currentTarget.style.boxShadow = 'none'
             }}
           />
@@ -151,7 +151,7 @@ export function SoundGrid() {
         />
 
         {/* Divider */}
-        <div style={{ width: '24px', height: '1px', background: 'rgba(255,255,255,0.06)', margin: '4px 0' }} />
+        <div style={{ width: '24px', height: '1px', background: 'var(--glass-border)', margin: '4px 0' }} />
 
         {availableCategories.map((cat) => (
           <SidebarItem
@@ -165,7 +165,7 @@ export function SoundGrid() {
         ))}
 
         {/* Random mix config */}
-        <div style={{ width: '24px', height: '1px', background: 'rgba(255,255,255,0.06)', margin: '4px 0' }} />
+        <div style={{ width: '24px', height: '1px', background: 'var(--glass-border)', margin: '4px 0' }} />
         <SidebarItem
           icon=""
           label="Mix"

@@ -66,8 +66,8 @@ export function Slider({ value, min = 0, max = 1, onChange, height = 36 }: Slide
           width: '100%',
           height: '6px',
           borderRadius: '3px',
-          background: 'rgba(255,255,255,0.1)',
-          border: '1px solid rgba(255,255,255,0.15)',
+          background: 'var(--glass)',
+          border: '1px solid var(--glass-border)',
           position: 'relative',
         }}
       >
@@ -95,7 +95,7 @@ export function Slider({ value, min = 0, max = 1, onChange, height = 36 }: Slide
             height: '20px',
             borderRadius: '50%',
             background: 'linear-gradient(135deg, var(--accent-light), var(--accent))',
-            border: '2px solid rgba(255,255,255,0.4)',
+            border: '2px solid var(--glass-border)',
             boxShadow: '0 0 12px var(--accent-glow), 0 2px 4px rgba(0,0,0,0.3)',
           }}
         />

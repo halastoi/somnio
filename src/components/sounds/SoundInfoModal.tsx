@@ -75,7 +75,7 @@ export function SoundInfoModal({ sound, onClose }: SoundInfoModalProps) {
               padding: '24px',
               maxWidth: '360px',
               width: '100%',
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid var(--glass-border)',
               maxHeight: '80vh',
               overflowY: 'auto',
             }}
@@ -104,11 +104,11 @@ export function SoundInfoModal({ sound, onClose }: SoundInfoModalProps) {
                 </p>
 
                 <div style={{
-                  background: 'rgba(255,255,255,0.04)',
+                  background: 'var(--glass)',
                   borderRadius: '12px',
                   padding: '12px',
                   marginBottom: info.tip ? '12px' : '0',
-                  border: '1px solid rgba(255,255,255,0.06)',
+                  border: '1px solid var(--glass-border)',
                 }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     {labels.bestFor[language]}
@@ -143,11 +143,11 @@ export function SoundInfoModal({ sound, onClose }: SoundInfoModalProps) {
             {/* Volume slider when sound is active */}
             {activeSound && (
               <div style={{
-                background: 'rgba(255,255,255,0.04)',
+                background: 'var(--glass)',
                 borderRadius: '12px',
                 padding: '12px',
                 marginTop: '12px',
-                border: '1px solid rgba(255,255,255,0.06)',
+                border: '1px solid var(--glass-border)',
               }}>
                 <div style={{
                   display: 'flex',
@@ -176,12 +176,12 @@ export function SoundInfoModal({ sound, onClose }: SoundInfoModalProps) {
                 width: '100%',
                 padding: '12px',
                 borderRadius: '12px',
-                background: 'rgba(255,255,255,0.06)',
+                background: 'var(--bg-card)',
                 color: 'var(--text-secondary)',
                 fontSize: '14px',
                 fontWeight: 500,
                 marginTop: '16px',
-                border: '1px solid rgba(255,255,255,0.08)',
+                border: '1px solid var(--glass-border)',
               }}
             >
               {labels.close[language]}

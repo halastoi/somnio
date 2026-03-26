@@ -72,21 +72,21 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
               paddingBottom: `calc(28px + var(--safe-bottom))`,
               width: '100%',
               maxWidth: '480px',
-              border: '1px solid rgba(255,255,255,0.06)',
+              border: '1px solid var(--glass-border)',
               borderBottom: 'none',
             }}
           >
             {/* Handle + Close */}
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px', position: 'relative' }}>
-              <div style={{ width: '48px', height: '5px', borderRadius: '3px', background: 'rgba(255,255,255,0.2)' }} />
+              <div style={{ width: '48px', height: '5px', borderRadius: '3px', background: 'var(--text-muted)' }} />
               <button
                 onClick={onClose}
                 style={{
                   position: 'absolute', right: 0, top: '-4px',
                   width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
-                  borderRadius: '50%', background: 'rgba(255,255,255,0.08)',
+                  borderRadius: '50%', background: 'var(--bg-card)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  border: '1px solid var(--glass-border)',
                 }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2.5" strokeLinecap="round">
@@ -167,14 +167,14 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
                         borderRadius: 'var(--radius-full)',
                         background: selectedMinutes === min
                           ? 'var(--accent)'
-                          : 'rgba(255,255,255,0.06)',
+                          : 'var(--bg-card)',
                         color: selectedMinutes === min ? '#fff' : 'var(--text-secondary)',
                         fontSize: '13px',
                         fontWeight: selectedMinutes === min ? 600 : 400,
                         border: '1px solid',
                         borderColor: selectedMinutes === min
                           ? 'transparent'
-                          : 'rgba(255,255,255,0.06)',
+                          : 'var(--glass-border)',
                         transition: 'all 0.2s',
                         boxShadow: selectedMinutes === min ? '0 0 12px var(--accent-glow)' : 'none',
                         minWidth: '52px',
@@ -188,7 +188,7 @@ export function TimerModal({ isOpen, onClose }: TimerModalProps) {
                 {/* Fade out setting */}
                 <div style={{
                   padding: '16px',
-                  background: 'rgba(255,255,255,0.03)',
+                  background: 'var(--glass)',
                   borderRadius: 'var(--radius-md)',
                   marginBottom: '24px',
                 }}>
@@ -294,7 +294,7 @@ function TimerCountdown({
           <circle
             cx="90" cy="90" r="80"
             fill="none"
-            stroke="rgba(255,255,255,0.06)"
+            stroke="var(--glass-border)"
             strokeWidth="4"
           />
           {/* Progress */}

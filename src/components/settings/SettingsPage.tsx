@@ -95,7 +95,7 @@ export function SettingsPage() {
         <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {t('settings.equalizer')}
         </h3>
-        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div style={{ background: 'var(--glass)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {([
             { label: 'eq.bass', value: eqBass, key: 'bass' as const },
             { label: 'eq.mid', value: eqMid, key: 'mid' as const },
@@ -130,10 +130,10 @@ export function SettingsPage() {
               alignSelf: 'flex-end',
               fontSize: '12px',
               color: 'var(--accent-light)',
-              background: 'rgba(255,255,255,0.06)',
+              background: 'var(--bg-card)',
               padding: '4px 12px',
               borderRadius: '6px',
-              border: '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid var(--glass-border)',
             }}
           >
             {t('eq.reset')}
@@ -146,7 +146,7 @@ export function SettingsPage() {
         <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {t('settings.autoStop')}
         </h3>
-        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ background: 'var(--glass)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid var(--glass-border)' }}>
           <button
             onClick={() => setAutoStop(!autoStopEnabled)}
             style={{
@@ -157,7 +157,7 @@ export function SettingsPage() {
             <span style={{ fontSize: '14px', fontWeight: 500 }}>{t('settings.autoStop.desc')}</span>
             <div style={{
               width: '44px', height: '24px', borderRadius: '12px',
-              background: autoStopEnabled ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
+              background: autoStopEnabled ? 'var(--accent)' : 'var(--glass-border)',
               position: 'relative', transition: 'background 0.2s', flexShrink: 0,
             }}>
               <div style={{
@@ -201,7 +201,7 @@ export function SettingsPage() {
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             width: '100%', padding: '14px 16px', borderRadius: 'var(--radius-md)',
-            background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.06)',
+            background: 'var(--bg-card)', border: '1px solid var(--glass-border)',
           }}
         >
           <div>
@@ -209,7 +209,7 @@ export function SettingsPage() {
           </div>
           <div style={{
             width: '44px', height: '24px', borderRadius: '12px',
-            background: binauralEnabled ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
+            background: binauralEnabled ? 'var(--accent)' : 'var(--glass-border)',
             position: 'relative', transition: 'background 0.2s', flexShrink: 0,
           }}>
             <div style={{
@@ -228,7 +228,7 @@ export function SettingsPage() {
         <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {t('settings.sleepStats')}
         </h3>
-        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ background: 'var(--glass)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid var(--glass-border)' }}>
           {history.length === 0 ? (
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', textAlign: 'center' }}>
               {t('sleep.noData')}
@@ -273,7 +273,7 @@ export function SettingsPage() {
         <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {t('settings.howToUse')}
         </h3>
-        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ background: 'var(--glass)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
             { icon: '🎵', title: t('howto.mix.title'), desc: t('howto.mix.desc') },
             { icon: '🎚', title: t('howto.volume.title'), desc: t('howto.volume.desc') },
@@ -299,7 +299,7 @@ export function SettingsPage() {
         <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {t('settings.about')}
         </h3>
-        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ background: 'var(--glass)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid var(--glass-border)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
             <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{t('settings.version')}</span>
             <span style={{ fontSize: '14px' }}>1.0.0</span>
@@ -310,7 +310,7 @@ export function SettingsPage() {
           </p>
 
           {/* Tech stack */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px', marginBottom: '12px' }}>
+          <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '12px', marginBottom: '12px' }}>
             <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
               Built with
             </div>
@@ -319,10 +319,10 @@ export function SettingsPage() {
                 <span key={tech} style={{
                   fontSize: '11px',
                   color: 'var(--text-secondary)',
-                  background: 'rgba(255,255,255,0.06)',
+                  background: 'var(--bg-card)',
                   padding: '3px 8px',
                   borderRadius: '6px',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  border: '1px solid var(--glass-border)',
                 }}>
                   {tech}
                 </span>
@@ -331,7 +331,7 @@ export function SettingsPage() {
           </div>
 
           {/* Credits */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px' }}>
+          <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '12px' }}>
             <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>
               Credits & Thanks
             </div>
@@ -449,7 +449,7 @@ function SleepChart({ history }: { history: { date: string; minutes: number }[] 
               width: '100%',
               maxWidth: '24px',
               height: `${Math.max((day.minutes / maxMin) * 48, 2)}px`,
-              background: day.minutes > 0 ? 'var(--accent)' : 'rgba(255,255,255,0.08)',
+              background: day.minutes > 0 ? 'var(--accent)' : 'var(--glass-border)',
               borderRadius: '3px',
               transition: 'height 0.3s',
             }}
