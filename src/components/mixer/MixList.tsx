@@ -91,7 +91,7 @@ export function MixList() {
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div style={{ flex: 1, overflowY: 'auto', borderRadius: '16px' }}>
         {subTab === 'scenes' && <ScenesView scenes={scenes} loadScene={loadScene} t={t} favoriteScenes={favoriteScenes} toggleFavoriteScene={toggleFavoriteScene} />}
         {subTab === 'myMixes' && (
           <MyMixesView
@@ -175,12 +175,13 @@ function ScenesView({ scenes: sceneList, loadScene, t, favoriteScenes, toggleFav
               style={{
                 position: 'absolute', top: '8px', right: '8px',
                 width: '28px', height: '28px', minWidth: '28px', minHeight: '28px',
-                borderRadius: '50%', background: 'rgba(0,0,0,0.3)',
+                borderRadius: '50%', background: 'var(--bg-card)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: 'none', padding: 0,
+                border: '1px solid var(--glass-border)', padding: 0,
+                boxShadow: 'var(--shadow-sm)',
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill={isFav ? '#f87171' : 'none'} stroke={isFav ? '#f87171' : 'var(--text-muted)'} strokeWidth="2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill={isFav ? 'var(--danger)' : 'none'} stroke={isFav ? 'var(--danger)' : 'var(--text-muted)'} strokeWidth="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
             </button>
@@ -282,10 +283,11 @@ function MyMixesView({ savedMixes, activeSounds, alreadySaved, showSaveInput, se
                     ? 'linear-gradient(145deg, rgba(124,92,252,0.15) 0%, rgba(124,92,252,0.04) 100%)'
                     : 'var(--gradient-card)',
                   borderRadius: '14px',
-                  padding: '14px 16px',
+                  padding: '14px 12px 14px 16px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  gap: '12px',
                   border: isActive ? '1px solid rgba(124,92,252,0.4)' : '1px solid var(--glass-border)',
                   borderLeft: isActive ? '3px solid var(--accent-light)' : '3px solid rgba(124,92,252,0.3)',
                   boxShadow: isActive

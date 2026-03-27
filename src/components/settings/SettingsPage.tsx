@@ -1,5 +1,6 @@
 import { useSettingsStore, type Language, type ThemeMode } from '../../stores/useSettingsStore'
 import { useSleepStore } from '../../stores/useSleepStore'
+import { Slider } from '../ui/Slider'
 
 const languages: { id: Language; label: string; flag: string }[] = [
   { id: 'en', label: 'English', flag: '🇬🇧' },
@@ -108,19 +109,15 @@ export function SettingsPage() {
                   {band.value > 0 ? '+' : ''}{band.value} dB
                 </span>
               </div>
-              <input
-                type="range"
-                min={-12}
-                max={12}
-                step={1}
-                value={band.value}
-                onChange={(e) => {
-                  const v = Number(e.target.value)
-                  if (band.key === 'bass') setEq(v, eqMid, eqTreble)
-                  else if (band.key === 'mid') setEq(eqBass, v, eqTreble)
-                  else setEq(eqBass, eqMid, v)
+              <Slider
+                value={(band.value + 12) / 24}
+                onChange={(v) => {
+                  const db = Math.round(v * 24 - 12)
+                  if (band.key === 'bass') setEq(db, eqMid, eqTreble)
+                  else if (band.key === 'mid') setEq(eqBass, db, eqTreble)
+                  else setEq(eqBass, eqMid, db)
                 }}
-                style={{ width: '100%', accentColor: 'var(--accent)', cursor: 'pointer' }}
+                height={36}
               />
             </div>
           ))}
@@ -177,14 +174,10 @@ export function SettingsPage() {
                   {autoStopMinutes} {t('settings.autoStop.minutes')}
                 </span>
               </div>
-              <input
-                type="range"
-                min={10}
-                max={120}
-                step={10}
-                value={autoStopMinutes}
-                onChange={(e) => setAutoStop(true, Number(e.target.value))}
-                style={{ width: '100%' }}
+              <Slider
+                value={(autoStopMinutes - 10) / 110}
+                onChange={(v) => setAutoStop(true, Math.round(v * 11) * 10 + 10)}
+                height={36}
               />
             </div>
           )}

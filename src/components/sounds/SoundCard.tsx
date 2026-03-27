@@ -160,20 +160,19 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
         </span>
       </button>
 
-      {/* Right: vertical slider - same height, no card resize */}
+      {/* Bottom: horizontal volume slider */}
       {isActive && (
         <div
           style={{
-            width: '28px',
-            height: '100%',
-            flexShrink: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '10px 4px 10px 0',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: '0 8px 6px',
+            zIndex: 1,
           }}
         >
-          <VolumeBar
+          <HorizontalVolumeBar
             value={activeSound.volume}
             onChange={(v) => setSoundVolume(sound.id, v)}
           />
@@ -278,7 +277,8 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
           style={{
             position: 'absolute',
             top: '5px',
-            right: isActive ? '24px' : '5px',
+            left: '50%',
+            transform: 'translateX(-50%)',
             width: '6px',
             height: '6px',
             borderRadius: '50%',
@@ -291,17 +291,17 @@ export function SoundCard({ sound, onInfo }: SoundCardProps) {
   )
 }
 
-/** Compact vertical volume bar built into the card */
-function VolumeBar({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+/** Horizontal volume bar at bottom of card */
+function HorizontalVolumeBar({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   const trackRef = useRef<HTMLDivElement>(null)
   const pct = Math.round(value * 100)
 
-  const update = useCallback((clientY: number) => {
+  const update = useCallback((clientX: number) => {
     const track = trackRef.current
     if (!track) return
     const rect = track.getBoundingClientRect()
-    const y = Math.max(0, Math.min(clientY - rect.top, rect.height))
-    onChange(Math.round((1 - y / rect.height) * 100) / 100)
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width))
+    onChange(Math.round((x / rect.width) * 100) / 100)
   }, [onChange])
 
   return (
@@ -309,46 +309,40 @@ function VolumeBar({ value, onChange }: { value: number; onChange: (v: number) =
       ref={trackRef}
       onPointerDown={(e) => {
         (e.target as HTMLElement).setPointerCapture(e.pointerId)
-        update(e.clientY)
+        update(e.clientX)
       }}
       onPointerMove={(e) => {
-        if (e.buttons > 0) update(e.clientY)
+        if (e.buttons > 0) update(e.clientX)
       }}
       style={{
-        width: '14px',
-        height: '100%',
+        width: '100%',
+        height: '14px',
         display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
+        alignItems: 'center',
         cursor: 'pointer',
         touchAction: 'none',
-        position: 'relative',
       }}
     >
-      {/* Track bg */}
       <div
         style={{
-          width: '8px',
-          height: '100%',
-          borderRadius: '4px',
-          background: 'var(--glass)',
-          border: '1px solid var(--glass-border)',
+          width: '100%',
+          height: '4px',
+          borderRadius: '2px',
+          background: 'var(--slider-track)',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        {/* Fill from bottom */}
         <div
           style={{
             position: 'absolute',
             left: 0,
-            right: 0,
+            top: 0,
             bottom: 0,
-            height: `${pct}%`,
-            background: 'linear-gradient(to top, var(--accent), var(--accent-light))',
-            borderRadius: '4px',
-            transition: 'height 0.05s',
-            boxShadow: '0 0 6px var(--accent-glow)',
+            width: `${pct}%`,
+            background: 'linear-gradient(90deg, var(--accent), var(--accent-light))',
+            borderRadius: '2px',
+            transition: 'width 0.05s',
           }}
         />
       </div>
